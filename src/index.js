@@ -1,4 +1,4 @@
-import logo from '/logo.png'
+import logo from "/logo.png";
 
 export default function indexHTML() {
 
@@ -29,5 +29,5 @@ export default function indexHTML() {
 
   return {
     html
-  }
+  };
 }
