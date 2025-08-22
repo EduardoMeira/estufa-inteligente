@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --main-color: 86, 255, 149;
+  --dark-color: 23, 30, 33;
+  --label-color: 127, 140, 141;
+  --placeholder-color: 127, 140, 141;
+  --input-color: 55, 65, 70;
+  --background: rgba(var(--dark-color), 1);
+}
+
+@theme {
+  --color-primary: rgba(var(--main-color), 1);
+  --color-dark: rgba(var(--dark-color), 1);
+  --color-label: rgba(var(--label-color), 1);
+  --color-placeholder: rgba(var(--placeholder-color), 1);
+  --color-input: rgba(var(--input-color), 1);
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-width: 320px;
+  max-width: 992px;
+  margin: 0 auto;
+  height: 100vh;
+  min-height: 100vh;
+  background-color: var(--background);
+  font-family: "Poppins", sans-serif;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: rgba(255, 255, 255, 1);
+  }
+}
