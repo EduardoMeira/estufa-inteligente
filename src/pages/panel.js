@@ -47,7 +47,7 @@ export function panel(activeMenu) {
 
   const html = /*html*/ `
     ${menuPage?.html ? menuPage.html : "<h1 class=\"text-white font-semibold text-xl leading-none\">Bem-vindo(a)!</h1>"}
-    <footer class="mt-auto -mb-12 -mx-[1.875rem] py-4 px-14 border-t-2 border-footer-border">
+    <footer class="mt-auto -mb-12 sm:-mx-[1.875rem] -mx-5 py-4 px-14 border-t-2 border-footer-border">
       <nav class="footer-menu">
         <ul class="flex gap-2 justify-between">
           ${panelMenus.map(menu => {
