@@ -14,12 +14,14 @@ const routes = {
   [APP_PATHS.PANEL]: panel,
   [APP_PATHS.DASHBOARD]: () => panel(PANEL_MENUS.DASHBOARD),
   [APP_PATHS.CONTROLLERS]: () => panel(PANEL_MENUS.CONTROLLERS),
+  [APP_PATHS.CONTROLLER]: () => panel(PANEL_MENUS.CONTROLLERS),
   [APP_PATHS.PROFILE]: () => panel(PANEL_MENUS.PROFILE),
 };
 
 const app = document.querySelector("#app");
 
 function currentRoute(path) {
+  path = path.replace(/\d+/g, ":id");
   return routes[path];
 }
 

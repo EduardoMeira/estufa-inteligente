@@ -6,6 +6,7 @@ export const APP_PATHS = {
   PANEL: "/panel",
   DASHBOARD: "/dashboard",
   CONTROLLERS: "/controllers",
+  CONTROLLER: "/controllers/:id",
   PROFILE: "/profile"
 };
 
