@@ -26,6 +26,7 @@ export default function registry() {
       Criar conta
     </h1>
 
+    <form action="http://127.0.0.1/estufa/registro.php" method="POST" class="mt-10 flex flex-col">
     <form class="mt-10 flex flex-col h-full">
       <section>
         <div class="flex flex-col">
