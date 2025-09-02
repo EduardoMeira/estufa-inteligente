@@ -26,7 +26,8 @@ export function controllers() {
     }
   ];
 
-  let controllersList = [];
+  // let controllersList = [];
+  let controllersList = mockList;
 
   const html = /*html*/ `
     <div class="flex justify-between gap-2 items-center">
@@ -85,7 +86,7 @@ export function controllers() {
     `: `
       <ul class="flex flex-col gap-4">
         ${controllersList.map(controller => (`
-          <li class="flex items-center gap-4 before:content-[''] before:block before:w-4 before:h-4 before:aspect-square before:rounded-full before:bg-input">
+          <li class="flex items-center gap-4 before:content-[''] before:block before:w-4 before:h-4 before:aspect-square before:rounded-full before:bg-input ">
             <div class="flex items-center gap-2 justify-between w-full">
               <div class="flex items-center gap-4">
                 ${controller.image ? controller.image : controllerImagePlaceholder}

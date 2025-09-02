@@ -1,7 +1,8 @@
 import { controllers } from "@/pages/controllers";
 import { APP_PATHS, PANEL_MENUS } from "../constants";
+import { dashboard } from "./dashboard";
 
-/* eslint-disable indent */
+ 
 export const panelMenus = [
   {
     id: PANEL_MENUS.DASHBOARD,
@@ -12,7 +13,7 @@ export const panelMenus = [
         <path d="M1.375 0C1.01033 0 0.660591 0.144866 0.402728 0.402728C0.144866 0.660591 0 1.01033 0 1.375L0 5.5C0 5.86467 0.144866 6.21441 0.402728 6.47227C0.660591 6.73013 1.01033 6.875 1.375 6.875H8.25C8.61467 6.875 8.96441 6.73013 9.22227 6.47227C9.48013 6.21441 9.625 5.86467 9.625 5.5V1.375C9.625 1.01033 9.48013 0.660591 9.22227 0.402728C8.96441 0.144866 8.61467 0 8.25 0L1.375 0ZM13.75 15.125C13.3853 15.125 13.0356 15.2699 12.7777 15.5277C12.5199 15.7856 12.375 16.1353 12.375 16.5V20.625C12.375 20.9897 12.5199 21.3394 12.7777 21.5973C13.0356 21.8551 13.3853 22 13.75 22H20.625C20.9897 22 21.3394 21.8551 21.5973 21.5973C21.8551 21.3394 22 20.9897 22 20.625V16.5C22 16.1353 21.8551 15.7856 21.5973 15.5277C21.3394 15.2699 20.9897 15.125 20.625 15.125H13.75ZM1.375 9.625C1.01033 9.625 0.660591 9.76987 0.402728 10.0277C0.144866 10.2856 0 10.6353 0 11L0 20.625C0 20.9897 0.144866 21.3394 0.402728 21.5973C0.660591 21.8551 1.01033 22 1.375 22H8.25C8.61467 22 8.96441 21.8551 9.22227 21.5973C9.48013 21.3394 9.625 20.9897 9.625 20.625V11C9.625 10.6353 9.48013 10.2856 9.22227 10.0277C8.96441 9.76987 8.61467 9.625 8.25 9.625H1.375ZM13.75 0C13.3853 0 13.0356 0.144866 12.7777 0.402728C12.5199 0.660591 12.375 1.01033 12.375 1.375V11C12.375 11.3647 12.5199 11.7144 12.7777 11.9723C13.0356 12.2301 13.3853 12.375 13.75 12.375H20.625C20.9897 12.375 21.3394 12.2301 21.5973 11.9723C21.8551 11.7144 22 11.3647 22 11V1.375C22 1.01033 21.8551 0.660591 21.5973 0.402728C21.3394 0.144866 20.9897 0 20.625 0L13.75 0Z" fill="currentColor"/>
       </svg>
     `,
-    page: () => {}
+    page: dashboard
   },
   {
     id: PANEL_MENUS.CONTROLLERS,
@@ -46,25 +47,27 @@ export function panel(activeMenu) {
   const menuPage = panelMenus.find(menu => menu.id === activeMenu).page();
 
   const html = /*html*/ `
-    ${menuPage?.html ? menuPage.html : "<h1 class=\"text-white font-semibold text-xl leading-none\">Bem-vindo(a)!</h1>"}
+    ${menuPage?.html ? menuPage.html : "<h1 class=\"text-white font-semibold text-xl leading-8\">Bem-vindo(a)!</h1>"}
     <footer class="mt-auto -mb-12 sm:-mx-[1.875rem] -mx-5 py-4 px-14 border-t-2 border-footer-border">
       <nav class="footer-menu">
         <ul class="flex gap-2 justify-between">
-          ${panelMenus.map(menu => {
-    return `
-              <li>
-                <a aria-label="${menu.ariaLabel}" href="${menu.path}" class="${activeMenu === menu.id ? "text-primary" : "text-menu hover:text-gray-300"}">
-                  ${menu.icon}
-                </a>
-              </li>
-            `;
-  }).join("")}
+          ${panelMenus.map(menu => (`
+            <li>
+              <a aria-label="${menu.ariaLabel}" href="${menu.path}" class="${activeMenu === menu.id ? "text-primary" : "text-menu hover:text-gray-300"}">
+                ${menu.icon}
+              </a>
+            </li>
+          `)).join("")}
         </ul>
       </nav>
     </footer>
   `;
 
+  function execute() {
+    if (typeof menuPage.execute === "function") menuPage.execute();
+  }
+
   return {
-    html
+    html, execute
   };
 }
