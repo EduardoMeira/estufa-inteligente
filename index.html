@@ -1,16 +1,25 @@
 <!doctype html>
-<html lang="ptBR">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Estufa inteligente</title>
-  </head>
-  <body>
-    <main class="sm:px-[1.875rem] px-5 pt-[1.125rem] pb-12 h-full w-full flex flex-col" id="app"></main>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <title>Estufa inteligente</title>
+</head>
+<body>
+  <main class="sm:px-[1.875rem] px-5 pt-[1.125rem] pb-12 h-full w-full flex flex-col" id="app"></main>
+  <script type="module" src="/src/main.js"></script>
+  <script src="/src/websocketFake.js"></script>
+  <script>
+    // sobrescreve o WebSocket real com o fake
+    window.WebSocket = FakeWebSocket;
+  </script>
+</body>
 </html>

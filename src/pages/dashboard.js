@@ -1,6 +1,108 @@
 import { APP_PATHS } from "../constants";
 
 export function dashboard() {
+  const temperaturas = [5, 6, 9, 14, 18, 22, 25, 26, 21, 15, 10, 6];
+
+  // Umidade em %
+  const umidades = [80, 78, 75, 70, 68, 65, 63, 65, 70, 75, 78, 80];
+
+  async function main() {
+    var socket = new WebSocket("ws://172.16.4.13:81");
+
+    socket.onmessage = function (event) {
+      console.log("Mensagem recebida: " + event.data);
+      const data = event.data.split(":");
+      const msg = data[0] || "";
+      const sensor = data[1] || "";
+
+      if (sensor == "dht") {
+        var parts = msg.split(",");
+        document.getElementById("temperature").innerHTML = parts[0];
+        document.getElementById("humidity").innerHTML = parts[1];
+      }
+      else if (sensor == "soil") {
+        document.getElementById("soil").innerHTML = msg;
+      }
+      else if (sensor == "ldr") {
+        document.getElementById("ldr").innerHTML = msg;
+      }
+      else if (sensor.startsWith("rele")) {
+        let index = sensor.replace("rele", "");
+        let button = document.getElementById("rele" + index);
+        if (button) button.innerHTML = `Relé ${index} ${msg == "1" ? "ON" : "OFF"}`;
+      }
+    };
+
+    // Função para enviar comando de relé (modo manual)
+    function toggleRele(id) {
+      var button = document.getElementById("rele" + id);
+      var status = button.innerHTML.includes("OFF") ? "1" : "0";
+      socket.send(status + `:rele${id}:esp:localhost`);
+    }
+
+    // Função para trocar de modo
+    function setMode(mode) {
+      socket.send("mode:" + mode);
+      alert("Modo alterado para " + mode.toUpperCase());
+    }
+  }
+
+  function chart() {
+    Highcharts.chart("container", {
+      chart: {
+        backgroundColor: "#1e2a35"
+      },
+      title: {
+        text: "Histórico Mensal de Temperatura e Umidade",
+        style: { color: "#fff" }
+      },
+      xAxis: {
+        categories: [
+          "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+          "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+        ],
+        labels: { style: { color: "#fff" } }
+      },
+      yAxis: [{
+        title: {
+          text: "Temperatura (°C)",
+          style: { color: "#fff" }
+        },
+        labels: { style: { color: "#fff" } }
+      }, {
+        title: {
+          text: "Umidade (%)",
+          style: { color: "#fff" }
+        },
+        labels: { style: { color: "#fff" } },
+        opposite: true
+      }],
+      legend: {
+        itemStyle: { color: "#fff" }
+      },
+      tooltip: {
+        shared: true
+      },
+      series: [{
+        name: "Temperatura",
+        type: "line",
+        data: temperaturas,
+        tooltip: {
+          valueSuffix: " °C"
+        },
+        color: "#00bfff"
+      }, {
+        name: "Umidade",
+        type: "line",
+        yAxis: 1,
+        data: umidades,
+        tooltip: {
+          valueSuffix: " %"
+        },
+        color: "#8a2be2"
+      }]
+    });
+  }
 
   const html = /*html*/ `
     <div class="flex items-center gap-4">
@@ -49,7 +151,7 @@ export function dashboard() {
             <span>Umidade do solo</span>
           </header>
           <div class="flex gap-2 items-end justify-center mt-6">
-            <h4 class="text-4xl font-semibold text-white">00.00</h4>
+            <h4 id="soil" class="text-4xl font-semibold text-white">00.00</h4>
             <span class="text-label">%</span>
           </div>
         </li>
@@ -61,7 +163,7 @@ export function dashboard() {
             <span>Umidade do ar</span>
           </header>
           <div class="flex gap-2 items-end justify-center mt-6">
-            <h4 class="text-4xl font-semibold text-white">00.00</h4>
+            <h4 id="humidity" class="text-4xl font-semibold text-white">00.00</h4>
             <span class="text-label">%</span>
           </div>
         </li>
@@ -74,7 +176,7 @@ export function dashboard() {
             <span>Temperatura do ar</span>
           </header>
           <div class="flex gap-2 items-end justify-center mt-6">
-            <h4 class="text-4xl font-semibold text-white">00.00</h4>
+            <h4 id="temperature" class="text-4xl font-semibold text-white">00.00</h4>
             <span class="text-label">°C</span>
           </div>
         </li>
@@ -86,7 +188,7 @@ export function dashboard() {
             <span>Índice de luminosidade</span>
           </header>
           <div class="flex gap-2 items-end justify-center mt-6">
-            <h4 class="text-4xl font-semibold text-white">00.00</h4>
+            <h4 id="ldr" class="text-4xl font-semibold text-white">00.00</h4>
             <span class="text-label">lux</span>
           </div>
         </li>
@@ -172,6 +274,7 @@ export function dashboard() {
     <section class="mt-4 mb-11">
       <h3 class="text-white font-semibold text-xl">Histórico</h3>
       <div class="mt-4 min-h-48 bg-input rounded-lg">
+        <div id="container" style="width: 100%; height: 400px;"></div>
       </div>
     </section>
   `;
@@ -187,6 +290,8 @@ export function dashboard() {
   }
 
   function execute() {
+    main();
+    chart();
     setActuatorsControls();
   }
 
