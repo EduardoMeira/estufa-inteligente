@@ -15,6 +15,7 @@ const routes = {
   [APP_PATHS.DASHBOARD]: () => panel(PANEL_MENUS.DASHBOARD),
   [APP_PATHS.CONTROLLERS]: () => panel(PANEL_MENUS.CONTROLLERS),
   [APP_PATHS.CONTROLLER]: () => panel(PANEL_MENUS.CONTROLLERS),
+  [APP_PATHS.AUTOMATION]: () => panel(PANEL_MENUS.CONTROLLERS),
   [APP_PATHS.PROFILE]: () => panel(PANEL_MENUS.PROFILE),
 };
 
@@ -22,7 +23,14 @@ const app = document.querySelector("#app");
 
 function currentRoute(path) {
   path = path.replace(/\d+/g, ":id");
+  path = path.replace("/new", "/:id");
+  console.log(path);
   return routes[path];
+}
+
+function navigate(href) {
+  history.pushState({}, "", href);
+  render(currentRoute(href)());
 }
 
 function render(route) {
@@ -36,14 +44,14 @@ function render(route) {
     link.addEventListener("click", (event) => {
       event.preventDefault();
       const target = event.target.closest("a");
-      const path = target.getAttribute("href");
-      history.pushState({}, "", path);
-      render(currentRoute(path)());
+      navigate(target.getAttribute("href"));
     });
   });
   if (typeof route.execute === "function") route.execute();
 }
 
-
+window.addEventListener("popstate", () => {
+  navigate(window.location.pathname);
+});
 
 render(currentRoute(window.location.pathname)());

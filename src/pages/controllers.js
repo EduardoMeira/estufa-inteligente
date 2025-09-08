@@ -1,11 +1,24 @@
 import { APP_PATHS } from "../constants";
 import { automations } from "./automations";
+import { automationsForm } from "./automationsForm";
 
 export function controllers() {
   const isControllerSelected = /^\/controllers\/\d+\/?$/.test(window.location.pathname);
   if (isControllerSelected) {
-    const [id] = window.location.pathname.match(/\d+/);
-    return automations(id);
+    const [controllerId] = window.location.pathname.match(/\d+/);
+    return automations(Number(controllerId));
+  }
+  const isManagingAutomations = /^\/controllers\/\d+\/automations\/(\d+|new)\/?$/.test(window.location.pathname);
+  console.log("isManagingAutomations", isManagingAutomations);
+  if (isManagingAutomations) {
+    const m = window.location.pathname.match(/^\/controllers\/(\d+)\/automations\/(\d+|new)\/?$/);
+    if (!m) throw new Error("Rota inválida");
+
+    const [, controllerIdStr, automationIdRaw] = m;
+    const controllerId = Number(controllerIdStr);
+    const automationId = /^\d+$/.test(automationIdRaw) ? Number(automationIdRaw) : automationIdRaw;
+
+    return automationsForm({controllerId, automationId});
   }
 
   const controllerImagePlaceholder = `

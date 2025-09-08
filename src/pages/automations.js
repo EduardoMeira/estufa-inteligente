@@ -1,6 +1,6 @@
 import { APP_PATHS } from "../constants";
 
-export function automations() {
+export function automations(controllerId) {
 
   const mockList = [
     {
@@ -59,7 +59,7 @@ export function automations() {
       </div>
       <ul class="flex gap-6 items-center">
         <li>
-          <a href="#" class="text-white p-2 block rounded-full hover:bg-white hover:text-dark transition-colors">
+          <a href="${window.location.pathname}/automations/new" class="text-white p-2 block rounded-full hover:bg-white hover:text-dark transition-colors">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8 0C8.26522 0 8.51957 0.105357 8.70711 0.292893C8.89464 0.48043 9 0.734784 9 1V7H15C15.2652 7 15.5196 7.10536 15.7071 7.29289C15.8946 7.48043 16 7.73478 16 8C16 8.26522 15.8946 8.51957 15.7071 8.70711C15.5196 8.89464 15.2652 9 15 9H9V15C9 15.2652 8.89464 15.5196 8.70711 15.7071C8.51957 15.8946 8.26522 16 8 16C7.73478 16 7.48043 15.8946 7.29289 15.7071C7.10536 15.5196 7 15.2652 7 15V9H1C0.734784 9 0.48043 8.89464 0.292893 8.70711C0.105357 8.51957 0 8.26522 0 8C0 7.73478 0.105357 7.48043 0.292893 7.29289C0.48043 7.10536 0.734784 7 1 7H7V1C7 0.734784 7.10536 0.48043 7.29289 0.292893C7.48043 0.105357 7.73478 0 8 0Z" fill="currentColor"/>
             </svg>
@@ -114,7 +114,7 @@ export function automations() {
             <li class="flex items-center gap-4 bg-input rounded-md p-3">
               <label class="relative inline-flex items-center cursor-pointer gap-3">
                 <input type="checkbox" class="sr-only peer" ${index === 1? "disabled": automation.state === "on"? "checked": ""}>
-                <div class="w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input 
+                <div class="w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative 
                       after:content-[''] after:absolute after:top-1 after:left-1 
                       after:bg-white after:border-gray-300 after:border after:rounded-full
                       after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
