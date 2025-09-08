@@ -55,19 +55,19 @@ export function controllers() {
 
   const html = /*html*/ `
     <div class="flex justify-between gap-2 items-center">
-      <h1 class="text-white font-semibold text-xl leading-none">
+      <h1 class="text-light font-semibold text-xl leading-none">
         Controladores
       </h1>
       <ul class="flex gap-6 items-center">
         <li>
-          <a href="#" class="text-white p-2 block rounded-full hover:bg-white hover:text-dark transition-colors">
+          <a href="#" class="text-light p-2 block rounded-full hover:bg-light hover:text-dark transition-colors">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8 0C8.26522 0 8.51957 0.105357 8.70711 0.292893C8.89464 0.48043 9 0.734784 9 1V7H15C15.2652 7 15.5196 7.10536 15.7071 7.29289C15.8946 7.48043 16 7.73478 16 8C16 8.26522 15.8946 8.51957 15.7071 8.70711C15.5196 8.89464 15.2652 9 15 9H9V15C9 15.2652 8.89464 15.5196 8.70711 15.7071C8.51957 15.8946 8.26522 16 8 16C7.73478 16 7.48043 15.8946 7.29289 15.7071C7.10536 15.5196 7 15.2652 7 15V9H1C0.734784 9 0.48043 8.89464 0.292893 8.70711C0.105357 8.51957 0 8.26522 0 8C0 7.73478 0.105357 7.48043 0.292893 7.29289C0.48043 7.10536 0.734784 7 1 7H7V1C7 0.734784 7.10536 0.48043 7.29289 0.292893C7.48043 0.105357 7.73478 0 8 0Z" fill="currentColor"/>
             </svg>
           </a>
         </li>
         <li>
-          <a href="#" class="text-white flex">
+          <a href="#" class="text-light flex">
             <span class="inline-block origin-top hover:animate-[bell-wiggle_0.7s_ease-in-out] will-change-transform">
               <svg width="19" height="22" viewBox="0 0 19 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M9.5 22C10.1962 22 10.8639 21.7103 11.3562 21.1946C11.8484 20.6788 12.125 19.9794 12.125 19.25H6.875C6.875 19.9794 7.15156 20.6788 7.64384 21.1946C8.13613 21.7103 8.80381 22 9.5 22ZM9.5 2.63726L8.45394 2.85864C7.26716 3.11143 6.2003 3.78629 5.43414 4.76886C4.66798 5.75143 4.24964 6.98128 4.25 8.25001C4.25 9.11351 4.07412 11.2709 3.64756 13.3953C3.43756 14.4499 3.15406 15.5485 2.77737 16.5H16.2226C15.8459 15.5485 15.5637 14.4513 15.3524 13.3953C14.9259 11.2709 14.75 9.11351 14.75 8.25001C14.7501 6.98152 14.3316 5.75199 13.5654 4.7697C12.7993 3.78742 11.7326 3.11276 10.5461 2.86001L9.5 2.63726ZM17.6637 16.5C17.9564 17.1146 18.2951 17.6014 18.6875 17.875H0.3125C0.704937 17.6014 1.04356 17.1146 1.33625 16.5C2.5175 14.025 2.9375 9.46001 2.9375 8.25001C2.9375 4.92251 5.195 2.14501 8.19406 1.51114C8.17574 1.31995 8.19588 1.12686 8.25317 0.944326C8.31046 0.761791 8.40363 0.593861 8.52668 0.451368C8.64973 0.308874 8.79992 0.19498 8.96756 0.117032C9.13521 0.0390828 9.31658 -0.00119019 9.5 -0.00119019C9.68342 -0.00119019 9.86479 0.0390828 10.0324 0.117032C10.2001 0.19498 10.3503 0.308874 10.4733 0.451368C10.5964 0.593861 10.6895 0.761791 10.7468 0.944326C10.8041 1.12686 10.8243 1.31995 10.8059 1.51114C12.2897 1.82677 13.6236 2.67015 14.5816 3.89832C15.5396 5.12649 16.0628 6.66392 16.0625 8.25001C16.0625 9.46001 16.4825 14.025 17.6637 16.5Z" fill="currentColor"/>
@@ -88,7 +88,7 @@ export function controllers() {
             type="text" 
             name="query" 
             placeholder="Pesquisar controlador" 
-            class="placeholder:text-placeholder flex-1 outline-0 text-white text-sm"
+            class="placeholder:text-placeholder flex-1 outline-0 text-light text-sm"
           />
         </div>
       </div>
@@ -115,11 +115,11 @@ export function controllers() {
               <div class="flex items-center gap-4">
                 ${controller.image ? controller.image : controllerImagePlaceholder}
                 <div class="flex flex-col gap-1">
-                  <h3 class="text-white font-semibold text-xl">${controller.label}</h3>
+                  <h3 class="text-title font-semibold text-xl">${controller.label}</h3>
                   <p class="text-label font-normal text-sm">${controller.description} ${controller.ip}</p>
                 </div>
               </div>
-              <button class="leading-0 text-white p-2 hover:bg-input transition-colors rounded-full aspect-square">
+              <button class="leading-0 text-title p-2 hover:bg-input transition-colors rounded-full aspect-square">
                 <svg width="18" height="6" viewBox="0 0 18 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M2.125 5.0625C1.57799 5.0625 1.05339 4.8452 0.666592 4.45841C0.279799 4.07161 0.0625 3.54701 0.0625 3C0.0625 2.45299 0.279799 1.92839 0.666592 1.54159C1.05339 1.1548 1.57799 0.9375 2.125 0.9375C2.67201 0.9375 3.19661 1.1548 3.58341 1.54159C3.9702 1.92839 4.1875 2.45299 4.1875 3C4.1875 3.54701 3.9702 4.07161 3.58341 4.45841C3.19661 4.8452 2.67201 5.0625 2.125 5.0625ZM9 5.0625C8.45299 5.0625 7.92839 4.8452 7.54159 4.45841C7.1548 4.07161 6.9375 3.54701 6.9375 3C6.9375 2.45299 7.1548 1.92839 7.54159 1.54159C7.92839 1.1548 8.45299 0.9375 9 0.9375C9.54701 0.9375 10.0716 1.1548 10.4584 1.54159C10.8452 1.92839 11.0625 2.45299 11.0625 3C11.0625 3.54701 10.8452 4.07161 10.4584 4.45841C10.0716 4.8452 9.54701 5.0625 9 5.0625ZM15.875 5.0625C15.328 5.0625 14.8034 4.8452 14.4166 4.45841C14.0298 4.07161 13.8125 3.54701 13.8125 3C13.8125 2.45299 14.0298 1.92839 14.4166 1.54159C14.8034 1.1548 15.328 0.9375 15.875 0.9375C16.422 0.9375 16.9466 1.1548 17.3334 1.54159C17.7202 1.92839 17.9375 2.45299 17.9375 3C17.9375 3.54701 17.7202 4.07161 17.3334 4.45841C16.9466 4.8452 16.422 5.0625 15.875 5.0625Z" fill="currentColor"/>
                 </svg>

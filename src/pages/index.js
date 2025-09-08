@@ -6,7 +6,7 @@ export default function index() {
   const html =  /*html*/ `
     <div class="flex flex-col h-full">
       <section class="mt-auto mx-auto flex items-end gap-3">
-        <img src="${logo}" class="logo" alt="Logo Estufa Inteligente" />
+        <img src="${logo}" class="logo light-logo-filter" alt="Logo Estufa Inteligente" />
         <h1 class="text-xl font-semibold text-primary leading-[114.99999999999999%] max-w-[7.188rem]">
           Estufa Inteligente
         </h1>

@@ -14,6 +14,8 @@
   --dark-color: 23, 30, 33;
   --footer-border: 78, 91, 97;
   --label-color: 127, 140, 141;
+  --light-color: 255, 255, 255;
+  --title-color: 255, 255, 255;
   --placeholder-color: 127, 140, 141;
   --menu-color: 141, 141, 141;
   --input-color: 55, 65, 70;
@@ -26,6 +28,8 @@
 @theme {
   --color-primary: rgba(var(--main-color), 1);
   --color-dark: rgba(var(--dark-color), 1);
+  --color-light: rgba(var(--light-color), 1);
+  --color-title: rgba(var(--title-color), 1);
   --color-label: rgba(var(--label-color), 1);
   --color-menu: rgba(var(--menu-color), 1);
   --color-placeholder: rgba(var(--placeholder-color), 1);
@@ -55,9 +59,23 @@ button:not(:disabled) {
   cursor: pointer;
 }
 
+.light-logo-filter {
+  filter: none;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     --background: rgba(255, 255, 255, 1);
+    --main-color: 0, 122, 61;
+    --dark-color: 255, 255, 255;
+    --light-color: 127, 140, 141;
+    --input-color: 248, 248, 248;
+    --search-input-color: 248, 248, 248;
+    --title-color: 78, 91, 97;
+  }
+
+  .light-logo-filter {
+    filter: brightness(0) saturate(100%) invert(37%) sepia(14%) saturate(3112%) hue-rotate(104deg) brightness(92%) contrast(102%);
   }
 }
 

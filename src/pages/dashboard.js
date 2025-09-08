@@ -1,6 +1,36 @@
 import { APP_PATHS } from "../constants";
 
 export function dashboard() {
+  function getThemeOptions() {
+    const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    if (dark) {
+      return {
+        chart: {
+          backgroundColor: "#374146",
+          style: { color: "#ffffff" }
+        },
+        title: { text: "Histórico Mensal de Temperatura e Umidade", style: { color: "#ffffff" } },
+        subtitle: { style: { color: "#cccccc" } },
+        xAxis: { labels: { style: { color: "#cccccc" } }, lineColor: "#666" },
+        yAxis: { labels: { style: { color: "#cccccc" } }, gridLineColor: "#444" },
+        legend: { itemStyle: { color: "#ffffff" } }
+      };
+    } else {
+      return {
+        chart: {
+          backgroundColor: "#EFEEEE",
+          style: { color: "#4E5B61" }
+        },
+        title: { text: "Histórico Mensal de Temperatura e Umidade", style: { color: "#4E5B61" } },
+        subtitle: { style: { color: "#7F8C8D" } },
+        xAxis: { labels: { style: { color: "#7F8C8D" } }, lineColor: "#ccc" },
+        yAxis: { labels: { style: { color: "#7F8C8D" } }, gridLineColor: "#eee" },
+        legend: { itemStyle: { color: "#4E5B61" } }
+      };
+    }
+  }
+
   const temperaturas = [5, 6, 9, 14, 18, 22, 25, 26, 21, 15, 10, 6];
 
   // Umidade em %
@@ -47,39 +77,30 @@ export function dashboard() {
     }
   }
 
+  let historyChart;
+
   function chart() {
-    Highcharts.chart("container", {
-      chart: {
-        backgroundColor: "#1e2a35"
-      },
+    historyChart = Highcharts.chart("container", {
+      ...getThemeOptions(),
       title: {
         text: "Histórico Mensal de Temperatura e Umidade",
-        style: { color: "#fff" }
       },
       xAxis: {
         categories: [
           "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
           "Jul", "Ago", "Set", "Out", "Nov", "Dez"
         ],
-        labels: { style: { color: "#fff" } }
       },
       yAxis: [{
         title: {
           text: "Temperatura (°C)",
-          style: { color: "#fff" }
         },
-        labels: { style: { color: "#fff" } }
       }, {
         title: {
           text: "Umidade (%)",
-          style: { color: "#fff" }
         },
-        labels: { style: { color: "#fff" } },
         opposite: true
       }],
-      legend: {
-        itemStyle: { color: "#fff" }
-      },
       tooltip: {
         shared: true
       },
@@ -102,21 +123,25 @@ export function dashboard() {
         color: "#8a2be2"
       }]
     });
+
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+      historyChart.update(getThemeOptions());
+    });
   }
 
   const html = /*html*/ `
     <div class="flex items-center gap-4">
       <nav class="ml-[-0.625rem]">
-        <a href="${APP_PATHS.CONTROLLERS}">
+        <a href="${APP_PATHS.CONTROLLERS}" class="text-light">
           <svg width="20" height="15" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M20 7.5C20 7.21589 19.8903 6.94342 19.6949 6.74252C19.4996 6.54163 19.2347 6.42876 18.9584 6.42876H9.59159H3.55778L8.03028 1.83102C8.12712 1.73142 8.20394 1.61318 8.25635 1.48305C8.30876 1.35292 8.33573 1.21344 8.33573 1.07259C8.33573 0.931735 8.30876 0.792258 8.25635 0.662126C8.20394 0.531993 8.12712 0.413753 8.03028 0.314154C7.93344 0.214555 7.81847 0.135548 7.69194 0.081645C7.56542 0.0277424 7.4298 0 7.29285 0C7.1559 0 7.02028 0.0277424 6.89375 0.081645C6.76723 0.135548 6.65226 0.214555 6.55542 0.314154L0.306 6.74156C0.209002 6.84107 0.132045 6.95929 0.0795365 7.08943C0.0270279 7.21958 0 7.3591 0 7.5C0 7.6409 0.0270279 7.78042 0.0795365 7.91057C0.132045 8.04071 0.209002 8.15893 0.306 8.25843L6.55542 14.6858C6.751 14.887 7.01626 15 7.29285 15C7.56944 15 7.8347 14.887 8.03028 14.6858C8.22586 14.4847 8.33573 14.2119 8.33573 13.9274C8.33573 13.6429 8.22586 13.3701 8.03028 13.169L3.55778 8.57124H18.9584C19.2347 8.57124 19.4996 8.45837 19.6949 8.25748C19.8903 8.05658 20 7.78411 20 7.5Z" fill="white"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M20 7.5C20 7.21589 19.8903 6.94342 19.6949 6.74252C19.4996 6.54163 19.2347 6.42876 18.9584 6.42876H9.59159H3.55778L8.03028 1.83102C8.12712 1.73142 8.20394 1.61318 8.25635 1.48305C8.30876 1.35292 8.33573 1.21344 8.33573 1.07259C8.33573 0.931735 8.30876 0.792258 8.25635 0.662126C8.20394 0.531993 8.12712 0.413753 8.03028 0.314154C7.93344 0.214555 7.81847 0.135548 7.69194 0.081645C7.56542 0.0277424 7.4298 0 7.29285 0C7.1559 0 7.02028 0.0277424 6.89375 0.081645C6.76723 0.135548 6.65226 0.214555 6.55542 0.314154L0.306 6.74156C0.209002 6.84107 0.132045 6.95929 0.0795365 7.08943C0.0270279 7.21958 0 7.3591 0 7.5C0 7.6409 0.0270279 7.78042 0.0795365 7.91057C0.132045 8.04071 0.209002 8.15893 0.306 8.25843L6.55542 14.6858C6.751 14.887 7.01626 15 7.29285 15C7.56944 15 7.8347 14.887 8.03028 14.6858C8.22586 14.4847 8.33573 14.2119 8.33573 13.9274C8.33573 13.6429 8.22586 13.3701 8.03028 13.169L3.55778 8.57124H18.9584C19.2347 8.57124 19.4996 8.45837 19.6949 8.25748C19.8903 8.05658 20 7.78411 20 7.5Z" fill="currentColor"/>
           </svg>
         </a>
       </nav>
-      <h1 class="text-white font-semibold text-xl leading-none">
+      <h1 class="text-title font-semibold text-xl leading-none">
         Dashboard
       </h1>
-      <a href="#" class="text-white flex ml-auto">
+      <a href="#" class="text-light flex ml-auto">
         <span class="inline-block origin-top hover:animate-[bell-wiggle_0.7s_ease-in-out] will-change-transform">
           <svg width="19" height="22" viewBox="0 0 19 22" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9.5 22C10.1962 22 10.8639 21.7103 11.3562 21.1946C11.8484 20.6788 12.125 19.9794 12.125 19.25H6.875C6.875 19.9794 7.15156 20.6788 7.64384 21.1946C8.13613 21.7103 8.80381 22 9.5 22ZM9.5 2.63726L8.45394 2.85864C7.26716 3.11143 6.2003 3.78629 5.43414 4.76886C4.66798 5.75143 4.24964 6.98128 4.25 8.25001C4.25 9.11351 4.07412 11.2709 3.64756 13.3953C3.43756 14.4499 3.15406 15.5485 2.77737 16.5H16.2226C15.8459 15.5485 15.5637 14.4513 15.3524 13.3953C14.9259 11.2709 14.75 9.11351 14.75 8.25001C14.7501 6.98152 14.3316 5.75199 13.5654 4.7697C12.7993 3.78742 11.7326 3.11276 10.5461 2.86001L9.5 2.63726ZM17.6637 16.5C17.9564 17.1146 18.2951 17.6014 18.6875 17.875H0.3125C0.704937 17.6014 1.04356 17.1146 1.33625 16.5C2.5175 14.025 2.9375 9.46001 2.9375 8.25001C2.9375 4.92251 5.195 2.14501 8.19406 1.51114C8.17574 1.31995 8.19588 1.12686 8.25317 0.944326C8.31046 0.761791 8.40363 0.593861 8.52668 0.451368C8.64973 0.308874 8.79992 0.19498 8.96756 0.117032C9.13521 0.0390828 9.31658 -0.00119019 9.5 -0.00119019C9.68342 -0.00119019 9.86479 0.0390828 10.0324 0.117032C10.2001 0.19498 10.3503 0.308874 10.4733 0.451368C10.5964 0.593861 10.6895 0.761791 10.7468 0.944326C10.8041 1.12686 10.8243 1.31995 10.8059 1.51114C12.2897 1.82677 13.6236 2.67015 14.5816 3.89832C15.5396 5.12649 16.0628 6.66392 16.0625 8.25001C16.0625 9.46001 16.4825 14.025 17.6637 16.5Z" fill="currentColor"/>
@@ -135,40 +160,40 @@ export function dashboard() {
             type="text" 
             name="query" 
             placeholder="Pesquisar" 
-            class="placeholder:text-placeholder flex-1 outline-0 text-white text-sm"
+            class="placeholder:text-placeholder flex-1 outline-0 text-light text-sm"
           />
         </div>
       </div>
     </form>
     <section class="mt-4">
-      <h3 class="text-white font-semibold text-xl">Sensores</h3>
+      <h3 class="text-title font-semibold text-xl">Sensores</h3>
       <ul class="grid md:grid-cols-(--md--dashboard-size) grid-cols-(--sm--dashboard-size) mt-4 gap-4">
         <li class="bg-input px-3 py-3 rounded-lg min-h-32">
-          <header class="flex items-center gap-2 font-medium text-sm text-white">
+          <header class="flex items-center gap-2 font-medium text-sm text-light">
             <svg width="10" height="13" viewBox="0 0 10 13" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9.15339 5.71655L5.47067 0.227133C5.41724 0.156897 5.34665 0.0996362 5.26477 0.0601256C5.1829 0.020615 5.09212 0 5 0C4.90788 0 4.8171 0.020615 4.73523 0.0601256C4.65336 0.0996362 4.58276 0.156897 4.52933 0.227133L0.830055 5.74318C0.316216 6.51893 0.029914 7.40774 0 8.32006C0 9.56125 0.526784 10.7516 1.46447 11.6293C2.40215 12.5069 3.67392 13 5 13C6.32608 13 7.59785 12.5069 8.53553 11.6293C9.47322 10.7516 10 9.56125 10 8.32006C9.96806 7.39752 9.67597 6.49931 9.15339 5.71655Z" fill="#50C5FF"/>
             </svg>
             <span>Umidade do solo</span>
           </header>
           <div class="flex gap-2 items-end justify-center mt-6">
-            <h4 id="soil" class="text-4xl font-semibold text-white">00.00</h4>
+            <h4 id="soil" class="text-4xl font-semibold text-title">00.00</h4>
             <span class="text-label">%</span>
           </div>
         </li>
         <li class="bg-input px-3 py-3 rounded-lg min-h-32">
-          <header class="flex items-center gap-2 font-medium text-sm text-white">
+          <header class="flex items-center gap-2 font-medium text-sm text-light">
             <svg width="10" height="13" viewBox="0 0 10 13" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9.15339 5.71655L5.47067 0.227133C5.41724 0.156897 5.34665 0.0996362 5.26477 0.0601256C5.1829 0.020615 5.09212 0 5 0C4.90788 0 4.8171 0.020615 4.73523 0.0601256C4.65336 0.0996362 4.58276 0.156897 4.52933 0.227133L0.830055 5.74318C0.316216 6.51893 0.029914 7.40774 0 8.32006C0 9.56125 0.526784 10.7516 1.46447 11.6293C2.40215 12.5069 3.67392 13 5 13C6.32608 13 7.59785 12.5069 8.53553 11.6293C9.47322 10.7516 10 9.56125 10 8.32006C9.96806 7.39752 9.67597 6.49931 9.15339 5.71655ZM5 11.9603C3.969 11.959 2.98061 11.5752 2.25159 10.8928C1.52256 10.2104 1.11242 9.28532 1.11111 8.32032C1.14061 7.59299 1.37404 6.88574 1.78794 6.26957L2.30739 5.4954L7.90394 10.7334C7.54041 11.1188 7.09351 11.4275 6.59287 11.639C6.09223 11.8505 5.54928 11.96 5 11.9603Z" fill="#50C5FF"/>
             </svg>
             <span>Umidade do ar</span>
           </header>
           <div class="flex gap-2 items-end justify-center mt-6">
-            <h4 id="humidity" class="text-4xl font-semibold text-white">00.00</h4>
+            <h4 id="humidity" class="text-4xl font-semibold text-title">00.00</h4>
             <span class="text-label">%</span>
           </div>
         </li>
         <li class="bg-input px-3 py-3 rounded-lg min-h-32">
-          <header class="flex items-center gap-2 font-medium text-sm text-white">
+          <header class="flex items-center gap-2 font-medium text-sm text-light">
             <svg width="10" height="17" viewBox="0 0 10 17" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8.18182 7.96454V3.36026C8.18182 1.50745 6.75426 0 5 0C3.24574 0 1.81818 1.50745 1.81818 3.36026V7.96454C0.708455 8.88251 0 10.2692 0 11.8182C0 14.5748 2.24343 16.8182 5 16.8182C7.75657 16.8182 10 14.5748 10 11.8182C10 10.2692 9.29155 8.8825 8.18182 7.96454ZM5 15.4545C2.9945 15.4545 1.36364 13.8237 1.36364 11.8182C1.36364 10.8808 1.72963 10.0337 2.31401 9.38832C2.56503 9.111 2.85666 8.87696 3.18182 8.68741V3.36026C3.18182 2.25941 3.99769 1.36364 5 1.36364C6.00231 1.36364 6.81818 2.25941 6.81818 3.36026V8.68741C7.14334 8.87696 7.43497 9.11099 7.68599 9.38832C8.27037 10.0337 8.63636 10.8808 8.63636 11.8182C8.63636 13.8237 7.0055 15.4545 5 15.4545Z" fill="#FF584B"/>
               <path d="M5.68186 9.89791V5.68182C5.68186 5.3054 5.37646 5 5.00004 5C4.62363 5 4.31823 5.3054 4.31823 5.68182V9.89791C3.52544 10.1798 2.95459 10.9288 2.95459 11.8182C2.95459 12.9479 3.87034 13.8636 5.00004 13.8636C6.12975 13.8636 7.0455 12.9479 7.0455 11.8182C7.0455 10.9288 6.47465 10.1798 5.68186 9.89791Z" fill="#FF584B"/>
@@ -176,29 +201,29 @@ export function dashboard() {
             <span>Temperatura do ar</span>
           </header>
           <div class="flex gap-2 items-end justify-center mt-6">
-            <h4 id="temperature" class="text-4xl font-semibold text-white">00.00</h4>
+            <h4 id="temperature" class="text-4xl font-semibold text-title">00.00</h4>
             <span class="text-label">°C</span>
           </div>
         </li>
         <li class="bg-input px-3 py-3 rounded-lg min-h-32">
-          <header class="flex items-center gap-2 font-medium text-sm text-white">
+          <header class="flex items-center gap-2 font-medium text-sm text-light">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M7 12.1333C7.2291 12.1333 7.41963 12.2984 7.45915 12.5161L7.46667 12.6V13.5333C7.46667 13.7911 7.25773 14 7 14C6.7709 14 6.58037 13.8349 6.54085 13.6172L6.53333 13.5333V12.6C6.53333 12.3423 6.74227 12.1333 7 12.1333ZM11.2252 10.5758L11.2898 10.6298L11.9497 11.2898C12.132 11.472 12.132 11.7675 11.9497 11.9497C11.7878 12.1117 11.5363 12.1297 11.3544 12.0037L11.2898 11.9497L10.6298 11.2898C10.4476 11.1075 10.4476 10.8121 10.6298 10.6298C10.7918 10.4678 11.0433 10.4498 11.2252 10.5758ZM3.37019 10.6298C3.53218 10.7918 3.55018 11.0433 3.42418 11.2252L3.37019 11.2898L2.71022 11.9497C2.52797 12.132 2.2325 12.132 2.05025 11.9497C1.88826 11.7878 1.87026 11.5363 1.99625 11.3544L2.05025 11.2898L2.71022 10.6298C2.89246 10.4476 3.18794 10.4476 3.37019 10.6298ZM7 2.8C9.3196 2.8 11.2 4.6804 11.2 7C11.2 9.3196 9.3196 11.2 7 11.2C4.6804 11.2 2.8 9.3196 2.8 7C2.8 4.6804 4.6804 2.8 7 2.8ZM7 3.73333V10.2667L7.17923 10.2618C8.90001 10.1688 10.2667 8.74399 10.2667 7C10.2667 5.19587 8.80413 3.73333 7 3.73333ZM1.4 6.53333C1.65773 6.53333 1.86667 6.74227 1.86667 7C1.86667 7.2291 1.70158 7.41963 1.48388 7.45915L1.4 7.46667H0.466667C0.208934 7.46667 0 7.25773 0 7C0 6.7709 0.165083 6.58037 0.382783 6.54085L0.466667 6.53333H1.4ZM13.5333 6.53333C13.7911 6.53333 14 6.74227 14 7C14 7.2291 13.8349 7.41963 13.6172 7.45915L13.5333 7.46667H12.6C12.3423 7.46667 12.1333 7.25773 12.1333 7C12.1333 6.7709 12.2984 6.58037 12.5161 6.54085L12.6 6.53333H13.5333ZM2.64559 1.99625L2.71022 2.05025L3.37019 2.71022C3.55243 2.89246 3.55243 3.18794 3.37019 3.37019C3.20819 3.53218 2.95673 3.55018 2.77485 3.42418L2.71022 3.37019L2.05025 2.71022C1.86801 2.52797 1.86801 2.2325 2.05025 2.05025C2.21225 1.88826 2.46371 1.87026 2.64559 1.99625ZM11.9497 2.05025C12.1117 2.21225 12.1297 2.46371 12.0037 2.64559L11.9497 2.71022L11.2898 3.37019C11.1075 3.55243 10.8121 3.55243 10.6298 3.37019C10.4678 3.20819 10.4498 2.95673 10.5758 2.77485L10.6298 2.71022L11.2898 2.05025C11.472 1.86801 11.7675 1.86801 11.9497 2.05025ZM7 0C7.2291 0 7.41963 0.165083 7.45915 0.382783L7.46667 0.466667V1.4C7.46667 1.65773 7.25773 1.86667 7 1.86667C6.7709 1.86667 6.58037 1.70158 6.54085 1.48388L6.53333 1.4V0.466667C6.53333 0.208934 6.74227 0 7 0Z" fill="#FFFF53"/>
             </svg>
             <span>Índice de luminosidade</span>
           </header>
           <div class="flex gap-2 items-end justify-center mt-6">
-            <h4 id="ldr" class="text-4xl font-semibold text-white">00.00</h4>
+            <h4 id="ldr" class="text-4xl font-semibold text-title">00.00</h4>
             <span class="text-label">lux</span>
           </div>
         </li>
       </ul>
     </section>
     <section class="mt-4" id="actuators">
-      <h3 class="text-white font-semibold text-xl">Atuadores</h3>
+      <h3 class="text-title font-semibold text-xl">Atuadores</h3>
       <ul class="grid md:grid-cols-(--md--dashboard-size) grid-cols-(--sm--dashboard-size) mt-4 gap-4">
         <li id="irrigation" class="bg-input px-3 py-3 rounded-lg min-h-32">
-          <header class="flex items-center gap-2 font-medium text-sm text-white">
+          <header class="flex items-center gap-2 font-medium text-sm text-light">
             <svg width="10" height="13" viewBox="0 0 10 13" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9.15339 5.71655L5.47067 0.227133C5.41724 0.156897 5.34665 0.0996362 5.26477 0.0601256C5.1829 0.020615 5.09212 0 5 0C4.90788 0 4.8171 0.020615 4.73523 0.0601256C4.65336 0.0996362 4.58276 0.156897 4.52933 0.227133L0.830055 5.74318C0.316216 6.51893 0.029914 7.40774 0 8.32006C0 9.56125 0.526784 10.7516 1.46447 11.6293C2.40215 12.5069 3.67392 13 5 13C6.32608 13 7.59785 12.5069 8.53553 11.6293C9.47322 10.7516 10 9.56125 10 8.32006C9.96806 7.39752 9.67597 6.49931 9.15339 5.71655Z" fill="#50C5FF"/>
             </svg>
@@ -213,7 +238,7 @@ export function dashboard() {
                     after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
               </div>
             </label>
-            <p class="text-sm text-white flex items-center gap-2">
+            <p class="text-sm text-light flex items-center gap-2">
               <span class="w-[0.313rem] h-[0.313rem] rounded-full group-[.is-active]:bg-toggle-input bg-off-state"></span>
               <span class="group-[.is-active]:hidden">Desligado</span>
               <span class="hidden group-[.is-active]:inline">Ligado</span>
@@ -221,7 +246,7 @@ export function dashboard() {
           </div>
         </li>
         <li id="ventilation" class="bg-input px-3 py-3 rounded-lg min-h-32">
-          <header class="flex items-center gap-2 font-medium text-sm text-white">
+          <header class="flex items-center gap-2 font-medium text-sm text-light">
             <svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8.77558 4.49012C11.5362 3.02935 14.0312 4.70729 14.0312 7.4601C14.0312 9.84734 12.4517 10.7254 10.7254 9.57393C10.1754 9.19272 9.81765 8.94588 9.55831 8.77871C10.9863 11.5253 9.31146 14 6.56958 14C4.18235 14 3.30432 12.4205 4.45575 10.6941C4.85571 10.1176 5.10724 9.75204 5.27441 9.48957C2.50597 10.9707 0 9.29115 0 6.53208C0 4.14485 1.57951 3.26682 3.30588 4.41826C3.86051 4.80259 4.21984 5.04944 4.47919 5.21661C3.05435 2.4716 4.72916 0 7.46948 0C9.85671 0 10.7347 1.57951 9.58331 3.30588C9.19272 3.86832 8.94275 4.23078 8.77558 4.49012Z" fill="white"/>
               <path d="M7.03042 8.53187C7.87563 8.53187 8.5615 7.84601 8.5615 7.00079C8.5615 6.15557 7.87563 5.46971 7.03042 5.46971C6.1852 5.46971 5.49934 6.15557 5.49934 7.00079C5.49934 7.84601 6.1852 8.53187 7.03042 8.53187ZM6.39299 9.2521C6.22738 9.66612 5.95554 10.0754 5.18375 11.18C4.42446 12.3174 4.87284 13.1251 6.56953 13.1251C8.86459 13.1251 10.1254 10.9816 8.40058 8.56624C8.40058 8.56624 7.5991 8.96776 7.02885 8.96776C6.84762 8.96776 6.67108 8.94276 6.50391 8.89746C6.47735 9.01776 6.43986 9.13493 6.39299 9.2521ZM4.7463 6.35399C4.33228 6.18838 3.92295 5.91654 2.81839 5.14475C1.68101 4.38546 0.873291 4.83385 0.873291 6.53053C0.873291 8.82715 3.0168 10.0864 5.43216 8.36158C5.43216 8.36158 5.06189 7.56792 5.06189 6.99923C5.06189 6.81644 5.08688 6.6399 5.13375 6.47273C5.00252 6.4446 4.87441 6.40555 4.7463 6.35399ZM7.64597 4.74636C7.81158 4.33234 8.08342 3.92301 8.85521 2.81845C9.6145 1.68107 9.16611 0.873352 7.46943 0.873352C5.17281 0.873352 3.91358 3.01686 5.63838 5.43222C5.63838 5.43222 6.46485 5.0307 7.03198 5.0307C7.2054 5.0307 7.37413 5.05257 7.53505 5.09632C7.56161 4.97914 7.5991 4.86353 7.64597 4.74636ZM8.59743 5.62907C8.59743 5.62907 8.99895 6.41961 8.99895 7.00079C8.99895 7.18202 8.97395 7.35857 8.92864 7.52573C9.04894 7.55386 9.16612 7.59135 9.28329 7.63822C9.69731 7.80383 10.1066 8.07567 11.2112 8.84746C12.3486 9.60675 13.1563 9.15836 13.1563 7.46168C13.1563 5.16506 11.0128 3.90426 8.59743 5.62907Z" fill="#374146"/>
@@ -237,7 +262,7 @@ export function dashboard() {
                     after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
               </div>
             </label>
-            <p class="text-sm text-white flex items-center gap-2">
+            <p class="text-sm text-light flex items-center gap-2">
               <span class="w-[0.313rem] h-[0.313rem] rounded-full group-[.is-active]:bg-toggle-input bg-off-state"></span>
               <span class="group-[.is-active]:hidden">Desligado</span>
               <span class="hidden group-[.is-active]:inline">Ligado</span>
@@ -245,7 +270,7 @@ export function dashboard() {
           </div>
         </li>
         <li id="lighting" class="bg-input px-3 py-3 rounded-lg min-h-32">
-          <header class="flex items-center gap-2 font-medium text-sm text-white">
+          <header class="flex items-center gap-2 font-medium text-sm text-light">
             <svg width="10" height="15" viewBox="0 0 10 15" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M4.99922 0.794973C5.57069 0.794973 6.12413 0.910402 6.64512 1.13754C7.14808 1.35723 7.60057 1.67186 7.98996 2.074C8.37935 2.47614 8.68401 2.94345 8.89673 3.46288C9.11666 4.00093 9.22843 4.57249 9.22843 5.16267C9.22843 5.86455 9.07159 6.53293 8.76333 7.15289C8.46948 7.74307 8.03863 8.26623 7.51944 8.66651C7.14447 8.95508 6.91913 9.42611 6.91913 9.92692V11.1222H3.07571V9.9232C3.07571 9.42424 2.85037 8.95322 2.4754 8.66464C1.8823 8.20851 1.41359 7.59972 1.11794 6.90342C0.968317 6.54782 0.863759 6.17174 0.809677 5.78822C0.753792 5.38794 0.75199 4.97463 0.806071 4.56318C0.867364 4.08471 1.00617 3.62299 1.2207 3.1892C1.42982 2.76472 1.70383 2.37933 2.03734 2.04421C2.36904 1.7091 2.74761 1.4317 3.16224 1.22504C3.58588 1.0128 4.03657 0.87689 4.50167 0.822899C4.66932 0.804282 4.83518 0.794973 4.99922 0.794973ZM4.99922 0C4.80814 0 4.61344 0.0111708 4.41694 0.033512C2.17254 0.296021 0.340967 2.14661 0.0453188 4.45892C-0.208866 6.43798 0.627601 8.23271 2.01751 9.30137C2.20499 9.44658 2.30775 9.68117 2.30775 9.9232V11.1203C2.30775 11.5597 2.65207 11.9153 3.07751 11.9153H6.92274C7.34818 11.9153 7.6925 11.5597 7.6925 11.1203V9.92506C7.6925 9.68303 7.79346 9.44658 7.98274 9.30137C9.2068 8.36118 10 6.85873 10 5.16267C9.9982 2.31231 7.76101 0 4.99922 0ZM6.92274 13.1068H3.07571C2.86299 13.1068 2.69173 12.9281 2.69173 12.7103C2.69173 12.4924 2.86479 12.3137 3.07571 12.3137H6.92093C7.13366 12.3137 7.30492 12.4924 7.30492 12.7103C7.30492 12.9281 7.13366 13.1068 6.92274 13.1068ZM6.15297 14.2983H3.84548C3.63275 14.2983 3.46149 14.1196 3.46149 13.9018C3.46149 13.684 3.63456 13.5052 3.84548 13.5052H6.15297C6.36569 13.5052 6.53695 13.684 6.53695 13.9018C6.53695 14.1196 6.36569 14.2983 6.15297 14.2983Z" fill="#FFFF53"/>
               <path d="M5.37616 11.8454C5.16736 11.8454 4.99927 11.6779 4.99927 11.4737V8.34123L6.80763 6.55773C6.95449 6.41289 7.19336 6.41289 7.34199 6.55773C7.48886 6.70257 7.48886 6.93816 7.34199 7.08475L5.75304 8.65186V11.4755C5.75304 11.6779 5.58495 11.8454 5.37616 11.8454Z" fill="#FFFF53"/>
@@ -262,7 +287,7 @@ export function dashboard() {
                     after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
               </div>
             </label>
-            <p class="text-sm text-white flex items-center gap-2">
+            <p class="text-sm text-light flex items-center gap-2">
               <span class="w-[0.313rem] h-[0.313rem] rounded-full group-[.is-active]:bg-toggle-input bg-off-state"></span>
               <span class="group-[.is-active]:hidden">Desligado</span>
               <span class="hidden group-[.is-active]:inline">Ligado</span>
@@ -272,7 +297,7 @@ export function dashboard() {
       </ul>
     </section>
     <section class="mt-4 mb-11">
-      <h3 class="text-white font-semibold text-xl">Histórico</h3>
+      <h3 class="text-title font-semibold text-xl">Histórico</h3>
       <div class="mt-4 min-h-48 bg-input rounded-lg">
         <div id="container" style="width: 100%; height: 400px;"></div>
       </div>

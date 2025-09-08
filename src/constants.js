@@ -14,5 +14,6 @@ export const APP_PATHS = {
 export const PANEL_MENUS = {
   DASHBOARD: "dashboard",
   CONTROLLERS: "controllers",
+  AUTOMATIONS: "automations",
   PROFILE: "profile"
 };
