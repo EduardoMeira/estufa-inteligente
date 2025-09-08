@@ -6,42 +6,79 @@ export function automations(controllerId) {
     {
       id: new Date().getTime(),
       label: "Ligar irrigação - umidade do solo",
-      state: "on",
-      active: true
+      state: "on"
     },
     {
-      id: new Date().getTime()+1,
+      id: new Date().getTime() + 1,
       label: "Desligar irrigação - umidade do solo",
-      state: "on",
-      active: true
+      state: "on"
     },
     {
-      id: new Date().getTime()+2,
+      id: new Date().getTime() + 2,
       label: "Automação 3",
-      state: "on",
-      active: true
+      state: "on"
     },
     {
-      id: new Date().getTime()+3,
+      id: new Date().getTime() + 3,
       label: "Automação 4",
-      state: "off",
-      active: false
+      state: "off"
     }
   ];
 
   // let automationsList = [];
   let automationsList = mockList;
 
-  const activeAutomations = [];
-  const inactiveAutomations = [];
-  automationsList.forEach(automation => {
-    if (automation.active) {
-      activeAutomations.push(automation);
-      return;
-    }
+  function groupAutomationsByState(list) {
+    const active = [];
+    const inactive = [];
 
-    inactiveAutomations.push(automation);
-  });
+    list.forEach(automation => {
+      if (automation.state === "on") {
+        active.push(automation);
+        return;
+      }
+
+      inactive.push(automation);
+    });
+
+    return { active, inactive };
+  }
+
+  function automationItem(automation) {
+    return `
+      <li class="flex items-center gap-4 bg-input rounded-md p-3">
+        <label for="automation-state-${automation.id}" class="relative inline-flex items-center cursor-pointer gap-3">
+          <input id="automation-state-${automation.id}" type="checkbox" class="sr-only peer" ${automation.state === "on" ? "checked" : ""}/>
+          <div class="w-12 min-w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative 
+                after:content-[''] after:absolute after:top-1 after:left-1 
+                after:bg-white after:border-gray-300 after:border after:rounded-full
+                after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
+          </div>
+          <h3 class="text-label font-semibold text-base">${automation.label}</h3>
+        </label>
+        <a href="${window.location.pathname}/automations/${automation.id}" class="ml-auto text-label">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.6643 0.164157C13.7165 0.111773 13.7786 0.0702125 13.8469 0.0418553C13.9153 0.013498 13.9885 -0.00109863 14.0625 -0.00109863C14.1365 -0.00109863 14.2098 0.013498 14.2781 0.0418553C14.3465 0.0702125 14.4085 0.111773 14.4608 0.164157L17.8358 3.53916C17.8882 3.59141 17.9297 3.65348 17.9581 3.72182C17.9864 3.79016 18.001 3.86342 18.001 3.93741C18.001 4.01139 17.9864 4.08466 17.9581 4.15299C17.9297 4.22133 17.8882 4.28341 17.8358 4.33566L6.58578 15.5857C6.53179 15.6393 6.4675 15.6814 6.39678 15.7094L0.771776 17.9594C0.669554 18.0003 0.557571 18.0103 0.44971 17.9882C0.34185 17.9661 0.242854 17.9128 0.164997 17.8349C0.0871395 17.7571 0.0338443 17.6581 0.0117184 17.5502C-0.0104075 17.4424 -0.000391027 17.3304 0.040526 17.2282L2.29053 11.6032C2.31857 11.5324 2.36067 11.4681 2.41428 11.4142L13.6643 0.164157ZM12.6079 2.81241L15.1875 5.39203L16.6422 3.93741L14.0625 1.35778L12.6079 2.81241ZM14.3922 6.18741L11.8125 3.60778L4.50003 10.9203V11.2499H5.06253C5.21171 11.2499 5.35478 11.3092 5.46027 11.4147C5.56576 11.5201 5.62503 11.6632 5.62503 11.8124V12.3749H6.18753C6.33671 12.3749 6.47978 12.4342 6.58527 12.5397C6.69076 12.6451 6.75003 12.7882 6.75003 12.9374V13.4999H7.07965L14.3922 6.18741ZM3.41103 12.0093L3.29178 12.1285L1.57278 16.4272L5.8714 14.7082L5.99065 14.5889C5.88335 14.5488 5.79084 14.4769 5.7255 14.3828C5.66017 14.2887 5.62511 14.177 5.62503 14.0624V13.4999H5.06253C4.91334 13.4999 4.77027 13.4406 4.66478 13.3352C4.55929 13.2297 4.50003 13.0866 4.50003 12.9374V12.3749H3.93753C3.82298 12.3748 3.71119 12.3398 3.6171 12.2744C3.52301 12.2091 3.45112 12.1166 3.41103 12.0093Z" fill="currentColor"/>
+          </svg>
+        </a>
+      </li>
+    `;
+  }
+
+  function renderAutomationsList(list) {
+    const groupedAutomations = groupAutomationsByState(list);
+    const activeAutomations = groupedAutomations.active;
+    const inactiveAutomations = groupedAutomations.inactive;
+
+    return [activeAutomations, inactiveAutomations].map((automations, index) => (automations.length === 0 ? "" : `
+      <h3 class="text-title font-semibold text-xl mt-4">
+        ${index === 0 ? "Ativas" : "Inativas"}
+      </h3>
+      <ul id="automations-list" class="flex flex-col gap-2 mt-4">
+        ${automations.map(automation => automationItem(automation)).join("")}
+      </ul>
+    `)).join("");
+  }
 
   const html = /*html*/ `
     <div class="flex justify-between gap-2 items-center">
@@ -105,34 +142,44 @@ export function automations(controllerId) {
           <p class="font-normal text-lg text-label">Crie sua primeira automação</p>
         </div>
       </div>
-    `: [activeAutomations, inactiveAutomations].map((automations, index) => (automations.length === 0? "" :`
-        <h3 class="text-title font-semibold text-xl mt-4">
-          ${index === 0? "Ativas" : "Inativas"}
-        </h3>
-        <ul class="flex flex-col gap-2 mt-4">
-          ${automations.map(automation => (`
-            <li class="flex items-center gap-4 bg-input rounded-md p-3">
-              <label class="relative inline-flex items-center cursor-pointer gap-3">
-                <input type="checkbox" class="sr-only peer" ${index === 1? "disabled": automation.state === "on"? "checked": ""}>
-                <div class="w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative 
-                      after:content-[''] after:absolute after:top-1 after:left-1 
-                      after:bg-white after:border-gray-300 after:border after:rounded-full
-                      after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
-                </div>
-                <h3 class="text-label font-semibold text-base">${automation.label}</h3>
-              </label>
-              <button type="button" class="ml-auto text-label">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13.6643 0.164157C13.7165 0.111773 13.7786 0.0702125 13.8469 0.0418553C13.9153 0.013498 13.9885 -0.00109863 14.0625 -0.00109863C14.1365 -0.00109863 14.2098 0.013498 14.2781 0.0418553C14.3465 0.0702125 14.4085 0.111773 14.4608 0.164157L17.8358 3.53916C17.8882 3.59141 17.9297 3.65348 17.9581 3.72182C17.9864 3.79016 18.001 3.86342 18.001 3.93741C18.001 4.01139 17.9864 4.08466 17.9581 4.15299C17.9297 4.22133 17.8882 4.28341 17.8358 4.33566L6.58578 15.5857C6.53179 15.6393 6.4675 15.6814 6.39678 15.7094L0.771776 17.9594C0.669554 18.0003 0.557571 18.0103 0.44971 17.9882C0.34185 17.9661 0.242854 17.9128 0.164997 17.8349C0.0871395 17.7571 0.0338443 17.6581 0.0117184 17.5502C-0.0104075 17.4424 -0.000391027 17.3304 0.040526 17.2282L2.29053 11.6032C2.31857 11.5324 2.36067 11.4681 2.41428 11.4142L13.6643 0.164157ZM12.6079 2.81241L15.1875 5.39203L16.6422 3.93741L14.0625 1.35778L12.6079 2.81241ZM14.3922 6.18741L11.8125 3.60778L4.50003 10.9203V11.2499H5.06253C5.21171 11.2499 5.35478 11.3092 5.46027 11.4147C5.56576 11.5201 5.62503 11.6632 5.62503 11.8124V12.3749H6.18753C6.33671 12.3749 6.47978 12.4342 6.58527 12.5397C6.69076 12.6451 6.75003 12.7882 6.75003 12.9374V13.4999H7.07965L14.3922 6.18741ZM3.41103 12.0093L3.29178 12.1285L1.57278 16.4272L5.8714 14.7082L5.99065 14.5889C5.88335 14.5488 5.79084 14.4769 5.7255 14.3828C5.66017 14.2887 5.62511 14.177 5.62503 14.0624V13.4999H5.06253C4.91334 13.4999 4.77027 13.4406 4.66478 13.3352C4.55929 13.2297 4.50003 13.0866 4.50003 12.9374V12.3749H3.93753C3.82298 12.3748 3.71119 12.3398 3.6171 12.2744C3.52301 12.2091 3.45112 12.1166 3.41103 12.0093Z" fill="currentColor"/>
-                </svg>
-              </button>
-            </li>
-          `)).join("")}
-        </ul>
-    `)).join("")}
-  `;
+    `: `<section id="automations-wrapper">${renderAutomationsList(automationsList)}</section>`
+}
+`;
+
+  function updateAutomationsList(newlist) {
+    const automationsWrapper = document.getElementById("automations-wrapper");
+    if (!automationsWrapper) return;
+
+    automationsList = newlist;
+    automationsWrapper.innerHTML = renderAutomationsList(newlist);
+    setAutomationsControls();
+  }
+
+  function setAutomationsControls() {
+    const controls = document.querySelectorAll("#automations-list input[type=\"checkbox\"]");
+    controls.forEach(control => {
+      control.addEventListener("click", () => {
+        const newAutomationList = automationsList.map(automation => {
+          if (control.id.endsWith(automation.id)) {
+            return {
+              ...automation,
+              state: control.checked ? "on" : "off"
+            };
+          }
+          return automation;
+        });
+
+        updateAutomationsList(newAutomationList);
+      });
+    });
+  }
+
+  function execute() {
+    setAutomationsControls();
+  }
 
   return {
-    html
+    html,
+    execute
   };
 }

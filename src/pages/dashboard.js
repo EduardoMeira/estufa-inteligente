@@ -232,7 +232,7 @@ export function dashboard() {
           <div class="flex flex-col gap-6 items-start justify-start mt-6 group">
             <label class="relative inline-flex items-center cursor-pointer ml-[1.375rem]">
               <input type="checkbox" class="sr-only peer">
-              <div class="w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative
+              <div class="w-12 min-w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative
                     after:content-[''] after:absolute after:top-1 after:left-1 
                     after:bg-white after:border-gray-300 after:border after:rounded-full
                     after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
@@ -256,7 +256,7 @@ export function dashboard() {
           <div class="flex flex-col gap-6 items-start justify-start mt-6 group">
             <label class="relative inline-flex items-center cursor-pointer ml-[1.375rem]">
               <input type="checkbox" class="sr-only peer">
-              <div class="w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative 
+              <div class="w-12 min-w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative 
                     after:content-[''] after:absolute after:top-1 after:left-1 
                     after:bg-white after:border-gray-300 after:border after:rounded-full
                     after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
@@ -281,7 +281,7 @@ export function dashboard() {
           <div class="flex flex-col gap-6 items-start justify-start mt-6 group">
             <label class="relative inline-flex items-center cursor-pointer ml-[1.375rem]">
               <input type="checkbox" class="sr-only peer">
-              <div class="w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative 
+              <div class="w-12 min-w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative 
                     after:content-[''] after:absolute after:top-1 after:left-1 
                     after:bg-white after:border-gray-300 after:border after:rounded-full
                     after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">

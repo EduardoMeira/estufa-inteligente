@@ -17,11 +17,14 @@
   --light-color: 255, 255, 255;
   --title-color: 255, 255, 255;
   --placeholder-color: 127, 140, 141;
+  --img-placeholder-color: 101, 116, 124;
   --menu-color: 141, 141, 141;
   --input-color: 55, 65, 70;
+  --dots-color: 55, 65, 70;
   --search-input-color: 31, 39, 42;
   --toggle-input-color: 88, 198, 124;
   --off-state-color: 255, 88, 75;
+  --delete-color: 255, 88, 75;
   --background: rgba(var(--dark-color), 1);
 }
 
@@ -33,11 +36,14 @@
   --color-label: rgba(var(--label-color), 1);
   --color-menu: rgba(var(--menu-color), 1);
   --color-placeholder: rgba(var(--placeholder-color), 1);
+  --color-img-placeholder: rgba(var(--img-placeholder-color), 1);
   --color-input: rgba(var(--input-color), 1);
+  --color-dots: rgba(var(--dots-color), 1);
   --color-search-input: rgba(var(--search-input-color), 1);
   --color-toggle-input: rgba(var(--toggle-input-color), 1);
   --color-off-state: rgba(var(--off-state-color), 1);
   --color-footer-border: rgba(var(--footer-border), 1);
+  --color-delete: rgba(var(--delete-color), 1);
 
   --md--dashboard-size: repeat(auto-fit, minmax(17.125rem, 1fr));;
   --sm--dashboard-size: repeat(auto-fit, minmax(11.75rem, 1fr));;
@@ -70,8 +76,11 @@ button:not(:disabled) {
     --dark-color: 255, 255, 255;
     --light-color: 127, 140, 141;
     --input-color: 248, 248, 248;
+    --dots-color: 239, 238, 238;
+    --img-placeholder-color: 101, 116, 124;
     --search-input-color: 248, 248, 248;
     --title-color: 78, 91, 97;
+    --delete-color: 205, 79, 69;
   }
 
   .light-logo-filter {

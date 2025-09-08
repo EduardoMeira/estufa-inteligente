@@ -24,7 +24,6 @@ const app = document.querySelector("#app");
 function currentRoute(path) {
   path = path.replace(/\d+/g, ":id");
   path = path.replace("/new", "/:id");
-  console.log(path);
   return routes[path];
 }
 

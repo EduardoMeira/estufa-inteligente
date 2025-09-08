@@ -53,7 +53,7 @@ export function panel(activeMenu) {
         <ul class="flex gap-2 justify-between">
           ${panelMenus.map(menu => (`
             <li>
-              <a aria-label="${menu.ariaLabel}" href="${menu.path}" class="${activeMenu === menu.id ? "text-primary" : "text-menu hover:text-gray-300"}">
+              <a aria-label="${menu.ariaLabel}" href="${menu.path}" class="${activeMenu === menu.id ? "text-primary" : "text-menu hover:text-primary/60"}">
                 ${menu.icon}
               </a>
             </li>
