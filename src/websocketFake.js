@@ -1,7 +1,5 @@
 class FakeWebSocket {
   constructor(url) {
-    console.log("Conectado ao Fake WebSocket em:", url);
-
     // callbacks
     this.onmessage = null;
     this.interval = null;

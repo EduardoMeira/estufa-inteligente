@@ -20,7 +20,10 @@
   <script src="/src/websocketFake.js"></script>
   <script>
     // sobrescreve o WebSocket real com o fake
-    // window.WebSocket = FakeWebSocket;
+    let CustomWebsocket = window.WebSocket;
+    if (sessionStorage.getItem('use-fake-websocket') === "true") {
+      CustomWebsocket = FakeWebSocket;
+    }
   </script>
 </body>
 </html>

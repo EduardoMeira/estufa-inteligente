@@ -37,7 +37,7 @@ export function dashboard() {
   const umidades = [80, 78, 75, 70, 68, 65, 63, 65, 70, 75, 78, 80];
 
   async function main() {
-    var socket = new WebSocket("ws://172.16.4.13:81");
+    var socket = new CustomWebsocket("ws://172.16.4.13:81");
 
     socket.onmessage = function (event) {
       console.log("Mensagem recebida: " + event.data);
@@ -165,6 +165,17 @@ export function dashboard() {
         </div>
       </div>
     </form>
+    <div class="mt-4 flex items-center justify-end">
+      <label class="relative inline-flex items-center cursor-pointer ml-[1.375rem] text-light">
+        <input id="fake-websocket" type="checkbox" class="sr-only peer" ${sessionStorage.getItem("use-fake-websocket") === "true" ? "checked" : ""}>
+        Local Websocket
+        <div class="ml-2 w-12 min-w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative
+              after:content-[''] after:absolute after:top-1 after:left-1 
+              after:bg-white after:border-gray-300 after:border after:rounded-full
+              after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
+        </div>
+      </label>
+    </div>
     <section class="mt-4">
       <h3 class="text-title font-semibold text-xl">Sensores</h3>
       <ul class="grid md:grid-cols-(--md--dashboard-size) grid-cols-(--sm--dashboard-size) mt-4 gap-4">
@@ -314,10 +325,20 @@ export function dashboard() {
     });
   }
 
+  function setWebsocketControl() {
+    const control = document.getElementById("fake-websocket");
+    control.addEventListener("click", () => {
+      console.log("click");
+      sessionStorage.setItem("use-fake-websocket", control.checked);
+      window.location.reload();
+    });
+  }
+
   function execute() {
     main();
     chart();
     setActuatorsControls();
+    setWebsocketControl();
   }
 
   return { html, execute };
