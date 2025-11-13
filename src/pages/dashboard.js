@@ -36,9 +36,8 @@ export function dashboard() {
   // Umidade em %
   const umidades = [80, 78, 75, 70, 68, 65, 63, 65, 70, 75, 78, 80];
 
+  const socket = new CustomWebsocket("ws://172.16.4.13:81");
   async function main() {
-    var socket = new CustomWebsocket("ws://172.16.4.13:81");
-
     socket.onmessage = function (event) {
       console.log("Mensagem recebida: " + event.data);
       const data = event.data.split(":");
@@ -62,19 +61,18 @@ export function dashboard() {
         if (button) button.innerHTML = `Relé ${index} ${msg == "1" ? "ON" : "OFF"}`;
       }
     };
+  }
+  
+  // Função para enviar comando de relé (modo manual)
+  function toggleRele(isActive) {
+    var status = isActive ? "0" : "1";
+    socket.send(status + `:rele${id}:esp:localhost`);
+  }
 
-    // Função para enviar comando de relé (modo manual)
-    function toggleRele(id) {
-      var button = document.getElementById("rele" + id);
-      var status = button.innerHTML.includes("OFF") ? "1" : "0";
-      socket.send(status + `:rele${id}:esp:localhost`);
-    }
-
-    // Função para trocar de modo
-    function setMode(mode) {
-      socket.send("mode:" + mode);
-      alert("Modo alterado para " + mode.toUpperCase());
-    }
+  // Função para trocar de modo
+  function setMode(mode) {
+    socket.send("mode:" + mode);
+    alert("Modo alterado para " + mode.toUpperCase());
   }
 
   let historyChart;
@@ -165,16 +163,31 @@ export function dashboard() {
         </div>
       </div>
     </form>
-    <div class="mt-4 flex items-center justify-end">
-      <label class="relative inline-flex items-center cursor-pointer ml-[1.375rem] text-light">
-        <input id="fake-websocket" type="checkbox" class="sr-only peer" ${sessionStorage.getItem("use-fake-websocket") === "true" ? "checked" : ""}>
-        Local Websocket
-        <div class="ml-2 w-12 min-w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative
-              after:content-[''] after:absolute after:top-1 after:left-1 
-              after:bg-white after:border-gray-300 after:border after:rounded-full
-              after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
-        </div>
-      </label>
+    <div class="flex justify-between items-center gap-1">
+      <div class="mt-4 flex items-center justify-end">
+        <label class="relative inline-flex items-center cursor-pointer text-light">
+          <input id="operation-mode" type="checkbox" class="sr-only peer" ${sessionStorage.getItem("operation-mode") === "true" ? "checked" : ""}>
+          Modo de operação: 
+          <div class="ml-2 w-12 min-w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative
+                after:content-[''] after:absolute after:top-1 after:left-1 
+                after:bg-white after:border-gray-300 after:border after:rounded-full
+                after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
+          </div>
+          <span class="ml-2 hidden peer-checked:inline">Auto</span>
+          <span class="ml-2 peer-checked:hidden">Manual</span>
+        </label>
+      </div>
+      <div class="mt-4 flex items-center justify-end">
+        <label class="relative inline-flex items-center cursor-pointer text-light">
+          <input id="fake-websocket" type="checkbox" class="sr-only peer" ${sessionStorage.getItem("use-fake-websocket") === "true" ? "checked" : ""}>
+          Local Websocket
+          <div class="ml-2 w-12 min-w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative
+                after:content-[''] after:absolute after:top-1 after:left-1 
+                after:bg-white after:border-gray-300 after:border after:rounded-full
+                after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
+          </div>
+        </label>
+      </div>
     </div>
     <section class="mt-4">
       <h3 class="text-title font-semibold text-xl">Sensores</h3>
@@ -233,7 +246,7 @@ export function dashboard() {
     <section class="mt-4" id="actuators">
       <h3 class="text-title font-semibold text-xl">Atuadores</h3>
       <ul class="grid md:grid-cols-(--md--dashboard-size) grid-cols-(--sm--dashboard-size) mt-4 gap-4">
-        <li id="irrigation" class="bg-input px-3 py-3 rounded-lg min-h-32">
+        <li id="irrigation" class="bg-input px-3 py-3 rounded-lg min-h-32" data-rele="rele0">
           <header class="flex items-center gap-2 font-medium text-sm text-light">
             <svg width="10" height="13" viewBox="0 0 10 13" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9.15339 5.71655L5.47067 0.227133C5.41724 0.156897 5.34665 0.0996362 5.26477 0.0601256C5.1829 0.020615 5.09212 0 5 0C4.90788 0 4.8171 0.020615 4.73523 0.0601256C4.65336 0.0996362 4.58276 0.156897 4.52933 0.227133L0.830055 5.74318C0.316216 6.51893 0.029914 7.40774 0 8.32006C0 9.56125 0.526784 10.7516 1.46447 11.6293C2.40215 12.5069 3.67392 13 5 13C6.32608 13 7.59785 12.5069 8.53553 11.6293C9.47322 10.7516 10 9.56125 10 8.32006C9.96806 7.39752 9.67597 6.49931 9.15339 5.71655Z" fill="#50C5FF"/>
@@ -256,7 +269,7 @@ export function dashboard() {
             </p>
           </div>
         </li>
-        <li id="ventilation" class="bg-input px-3 py-3 rounded-lg min-h-32">
+        <li id="ventilation" class="bg-input px-3 py-3 rounded-lg min-h-32" data-rele="rele1">
           <header class="flex items-center gap-2 font-medium text-sm text-light">
             <svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8.77558 4.49012C11.5362 3.02935 14.0312 4.70729 14.0312 7.4601C14.0312 9.84734 12.4517 10.7254 10.7254 9.57393C10.1754 9.19272 9.81765 8.94588 9.55831 8.77871C10.9863 11.5253 9.31146 14 6.56958 14C4.18235 14 3.30432 12.4205 4.45575 10.6941C4.85571 10.1176 5.10724 9.75204 5.27441 9.48957C2.50597 10.9707 0 9.29115 0 6.53208C0 4.14485 1.57951 3.26682 3.30588 4.41826C3.86051 4.80259 4.21984 5.04944 4.47919 5.21661C3.05435 2.4716 4.72916 0 7.46948 0C9.85671 0 10.7347 1.57951 9.58331 3.30588C9.19272 3.86832 8.94275 4.23078 8.77558 4.49012Z" fill="white"/>
@@ -280,7 +293,7 @@ export function dashboard() {
             </p>
           </div>
         </li>
-        <li id="lighting" class="bg-input px-3 py-3 rounded-lg min-h-32">
+        <li id="lighting" class="bg-input px-3 py-3 rounded-lg min-h-32" data-rele="rele2">
           <header class="flex items-center gap-2 font-medium text-sm text-light">
             <svg width="10" height="15" viewBox="0 0 10 15" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M4.99922 0.794973C5.57069 0.794973 6.12413 0.910402 6.64512 1.13754C7.14808 1.35723 7.60057 1.67186 7.98996 2.074C8.37935 2.47614 8.68401 2.94345 8.89673 3.46288C9.11666 4.00093 9.22843 4.57249 9.22843 5.16267C9.22843 5.86455 9.07159 6.53293 8.76333 7.15289C8.46948 7.74307 8.03863 8.26623 7.51944 8.66651C7.14447 8.95508 6.91913 9.42611 6.91913 9.92692V11.1222H3.07571V9.9232C3.07571 9.42424 2.85037 8.95322 2.4754 8.66464C1.8823 8.20851 1.41359 7.59972 1.11794 6.90342C0.968317 6.54782 0.863759 6.17174 0.809677 5.78822C0.753792 5.38794 0.75199 4.97463 0.806071 4.56318C0.867364 4.08471 1.00617 3.62299 1.2207 3.1892C1.42982 2.76472 1.70383 2.37933 2.03734 2.04421C2.36904 1.7091 2.74761 1.4317 3.16224 1.22504C3.58588 1.0128 4.03657 0.87689 4.50167 0.822899C4.66932 0.804282 4.83518 0.794973 4.99922 0.794973ZM4.99922 0C4.80814 0 4.61344 0.0111708 4.41694 0.033512C2.17254 0.296021 0.340967 2.14661 0.0453188 4.45892C-0.208866 6.43798 0.627601 8.23271 2.01751 9.30137C2.20499 9.44658 2.30775 9.68117 2.30775 9.9232V11.1203C2.30775 11.5597 2.65207 11.9153 3.07751 11.9153H6.92274C7.34818 11.9153 7.6925 11.5597 7.6925 11.1203V9.92506C7.6925 9.68303 7.79346 9.44658 7.98274 9.30137C9.2068 8.36118 10 6.85873 10 5.16267C9.9982 2.31231 7.76101 0 4.99922 0ZM6.92274 13.1068H3.07571C2.86299 13.1068 2.69173 12.9281 2.69173 12.7103C2.69173 12.4924 2.86479 12.3137 3.07571 12.3137H6.92093C7.13366 12.3137 7.30492 12.4924 7.30492 12.7103C7.30492 12.9281 7.13366 13.1068 6.92274 13.1068ZM6.15297 14.2983H3.84548C3.63275 14.2983 3.46149 14.1196 3.46149 13.9018C3.46149 13.684 3.63456 13.5052 3.84548 13.5052H6.15297C6.36569 13.5052 6.53695 13.684 6.53695 13.9018C6.53695 14.1196 6.36569 14.2983 6.15297 14.2983Z" fill="#FFFF53"/>
@@ -288,6 +301,31 @@ export function dashboard() {
               <path d="M5.06815 8.90197C4.97556 8.90197 4.88296 8.87323 4.80613 8.81191L2.70408 7.17736C2.52284 7.03555 2.49329 6.77878 2.63907 6.60248C2.78486 6.42619 3.04884 6.39745 3.23009 6.53925L5.33214 8.1738C5.51338 8.3156 5.54293 8.57238 5.39715 8.74867C5.31244 8.85023 5.19029 8.90197 5.06815 8.90197Z" fill="#FFFF53"/>
             </svg>
             <span>Iluminação</span>
+          </header>
+          <div class="flex flex-col gap-6 items-start justify-start mt-6 group">
+            <label class="relative inline-flex items-center cursor-pointer ml-[1.375rem]">
+              <input type="checkbox" class="sr-only peer">
+              <div class="w-12 min-w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative 
+                    after:content-[''] after:absolute after:top-1 after:left-1 
+                    after:bg-white after:border-gray-300 after:border after:rounded-full
+                    after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
+              </div>
+            </label>
+            <p class="text-sm text-light flex items-center gap-2">
+              <span class="w-[0.313rem] h-[0.313rem] rounded-full group-[.is-active]:bg-toggle-input bg-off-state"></span>
+              <span class="group-[.is-active]:hidden">Desligado</span>
+              <span class="hidden group-[.is-active]:inline">Ligado</span>
+            </p>
+          </div>
+        </li>
+        <li id="lighting" class="bg-input px-3 py-3 rounded-lg min-h-32" data-rele="rele3">
+          <header class="flex items-center gap-2 font-medium text-sm text-light">
+            <svg width="10" height="15" viewBox="0 0 10 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4.99922 0.794973C5.57069 0.794973 6.12413 0.910402 6.64512 1.13754C7.14808 1.35723 7.60057 1.67186 7.98996 2.074C8.37935 2.47614 8.68401 2.94345 8.89673 3.46288C9.11666 4.00093 9.22843 4.57249 9.22843 5.16267C9.22843 5.86455 9.07159 6.53293 8.76333 7.15289C8.46948 7.74307 8.03863 8.26623 7.51944 8.66651C7.14447 8.95508 6.91913 9.42611 6.91913 9.92692V11.1222H3.07571V9.9232C3.07571 9.42424 2.85037 8.95322 2.4754 8.66464C1.8823 8.20851 1.41359 7.59972 1.11794 6.90342C0.968317 6.54782 0.863759 6.17174 0.809677 5.78822C0.753792 5.38794 0.75199 4.97463 0.806071 4.56318C0.867364 4.08471 1.00617 3.62299 1.2207 3.1892C1.42982 2.76472 1.70383 2.37933 2.03734 2.04421C2.36904 1.7091 2.74761 1.4317 3.16224 1.22504C3.58588 1.0128 4.03657 0.87689 4.50167 0.822899C4.66932 0.804282 4.83518 0.794973 4.99922 0.794973ZM4.99922 0C4.80814 0 4.61344 0.0111708 4.41694 0.033512C2.17254 0.296021 0.340967 2.14661 0.0453188 4.45892C-0.208866 6.43798 0.627601 8.23271 2.01751 9.30137C2.20499 9.44658 2.30775 9.68117 2.30775 9.9232V11.1203C2.30775 11.5597 2.65207 11.9153 3.07751 11.9153H6.92274C7.34818 11.9153 7.6925 11.5597 7.6925 11.1203V9.92506C7.6925 9.68303 7.79346 9.44658 7.98274 9.30137C9.2068 8.36118 10 6.85873 10 5.16267C9.9982 2.31231 7.76101 0 4.99922 0ZM6.92274 13.1068H3.07571C2.86299 13.1068 2.69173 12.9281 2.69173 12.7103C2.69173 12.4924 2.86479 12.3137 3.07571 12.3137H6.92093C7.13366 12.3137 7.30492 12.4924 7.30492 12.7103C7.30492 12.9281 7.13366 13.1068 6.92274 13.1068ZM6.15297 14.2983H3.84548C3.63275 14.2983 3.46149 14.1196 3.46149 13.9018C3.46149 13.684 3.63456 13.5052 3.84548 13.5052H6.15297C6.36569 13.5052 6.53695 13.684 6.53695 13.9018C6.53695 14.1196 6.36569 14.2983 6.15297 14.2983Z" fill="#FFFF53"/>
+              <path d="M5.37616 11.8454C5.16736 11.8454 4.99927 11.6779 4.99927 11.4737V8.34123L6.80763 6.55773C6.95449 6.41289 7.19336 6.41289 7.34199 6.55773C7.48886 6.70257 7.48886 6.93816 7.34199 7.08475L5.75304 8.65186V11.4755C5.75304 11.6779 5.58495 11.8454 5.37616 11.8454Z" fill="#FFFF53"/>
+              <path d="M5.06815 8.90197C4.97556 8.90197 4.88296 8.87323 4.80613 8.81191L2.70408 7.17736C2.52284 7.03555 2.49329 6.77878 2.63907 6.60248C2.78486 6.42619 3.04884 6.39745 3.23009 6.53925L5.33214 8.1738C5.51338 8.3156 5.54293 8.57238 5.39715 8.74867C5.31244 8.85023 5.19029 8.90197 5.06815 8.90197Z" fill="#FFFF53"/>
+            </svg>
+            <span>Relê</span>
           </header>
           <div class="flex flex-col gap-6 items-start justify-start mt-6 group">
             <label class="relative inline-flex items-center cursor-pointer ml-[1.375rem]">
@@ -316,19 +354,31 @@ export function dashboard() {
   `;
 
   function setActuatorsControls() {
+    const IS_ACTIVE_CLASS = "is-active";
     const controls = document.querySelectorAll("#actuators input[type=\"checkbox\"]");
     controls.forEach(control => {
       control.addEventListener("click", () => {
         const group = control.closest(".group");
-        if (group) group.classList.toggle("is-active");
+        if (!group) return;
+        
+        toggleRele(group.classList.contains(IS_ACTIVE_CLASS));
+        group.classList.toggle(IS_ACTIVE_CLASS);
       });
+    });
+  }
+
+  function setOperationModeControl() {
+    const control = document.getElementById("operation-mode");
+    control.addEventListener("click", () => {
+      sessionStorage.setItem("operation-mode", control.checked);
+      const newMode = control.checked? "auto" : "manual";
+      setMode(newMode);
     });
   }
 
   function setWebsocketControl() {
     const control = document.getElementById("fake-websocket");
     control.addEventListener("click", () => {
-      console.log("click");
       sessionStorage.setItem("use-fake-websocket", control.checked);
       window.location.reload();
     });
@@ -339,6 +389,7 @@ export function dashboard() {
     chart();
     setActuatorsControls();
     setWebsocketControl();
+    setOperationModeControl();
   }
 
   return { html, execute };
