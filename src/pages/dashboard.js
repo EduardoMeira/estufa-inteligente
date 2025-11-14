@@ -1,6 +1,7 @@
 import { APP_PATHS } from "../constants";
 
 export function dashboard() {
+  const IS_ACTIVE_CLASS = "is-active";
   let historyChart;
 
   function getThemeOptions() {
@@ -33,7 +34,7 @@ export function dashboard() {
     }
   }
 
-  const socket = new CustomWebsocket("ws://172.16.4.13:81");
+  const socket = new CustomWebsocket("ws://127.0.0.1:8080");
   async function main() {
     socket.onmessage = function (event) {
       try {              
@@ -71,7 +72,8 @@ export function dashboard() {
         }
         else if (sensor.startsWith("rele")) {
           const control = document.getElementById(sensor);
-          if (control) control.click();
+          const isActive = data[0] === "1";
+          if (control) toggleActuatorState(control, isActive);
         }
       } catch (error) {
         console.error("Erro ao processar mensagem do socket:", error);
@@ -262,9 +264,9 @@ export function dashboard() {
               </div>
             </label>
             <p class="text-sm text-light flex items-center gap-2">
-              <span class="w-[0.313rem] h-[0.313rem] rounded-full group-[.is-active]:bg-toggle-input bg-off-state"></span>
-              <span class="group-[.is-active]:hidden">Desligado</span>
-              <span class="hidden group-[.is-active]:inline">Ligado</span>
+              <span class="w-[0.313rem] h-[0.313rem] rounded-full group-[.${IS_ACTIVE_CLASS}]:bg-toggle-input bg-off-state"></span>
+              <span class="group-[.${IS_ACTIVE_CLASS}]:hidden">Desligado</span>
+              <span class="hidden group-[.${IS_ACTIVE_CLASS}]:inline">Ligado</span>
             </p>
           </div>
         </li>
@@ -286,9 +288,9 @@ export function dashboard() {
               </div>
             </label>
             <p class="text-sm text-light flex items-center gap-2">
-              <span class="w-[0.313rem] h-[0.313rem] rounded-full group-[.is-active]:bg-toggle-input bg-off-state"></span>
-              <span class="group-[.is-active]:hidden">Desligado</span>
-              <span class="hidden group-[.is-active]:inline">Ligado</span>
+              <span class="w-[0.313rem] h-[0.313rem] rounded-full group-[.${IS_ACTIVE_CLASS}]:bg-toggle-input bg-off-state"></span>
+              <span class="group-[.${IS_ACTIVE_CLASS}]:hidden">Desligado</span>
+              <span class="hidden group-[.${IS_ACTIVE_CLASS}]:inline">Ligado</span>
             </p>
           </div>
         </li>
@@ -311,9 +313,9 @@ export function dashboard() {
               </div>
             </label>
             <p class="text-sm text-light flex items-center gap-2">
-              <span class="w-[0.313rem] h-[0.313rem] rounded-full group-[.is-active]:bg-toggle-input bg-off-state"></span>
-              <span class="group-[.is-active]:hidden">Desligado</span>
-              <span class="hidden group-[.is-active]:inline">Ligado</span>
+              <span class="w-[0.313rem] h-[0.313rem] rounded-full group-[.${IS_ACTIVE_CLASS}]:bg-toggle-input bg-off-state"></span>
+              <span class="group-[.${IS_ACTIVE_CLASS}]:hidden">Desligado</span>
+              <span class="hidden group-[.${IS_ACTIVE_CLASS}]:inline">Ligado</span>
             </p>
           </div>
         </li>
@@ -336,9 +338,9 @@ export function dashboard() {
               </div>
             </label>
             <p class="text-sm text-light flex items-center gap-2">
-              <span class="w-[0.313rem] h-[0.313rem] rounded-full group-[.is-active]:bg-toggle-input bg-off-state"></span>
-              <span class="group-[.is-active]:hidden">Desligado</span>
-              <span class="hidden group-[.is-active]:inline">Ligado</span>
+              <span class="w-[0.313rem] h-[0.313rem] rounded-full group-[.${IS_ACTIVE_CLASS}]:bg-toggle-input bg-off-state"></span>
+              <span class="group-[.${IS_ACTIVE_CLASS}]:hidden">Desligado</span>
+              <span class="hidden group-[.${IS_ACTIVE_CLASS}]:inline">Ligado</span>
             </p>
           </div>
         </li>
@@ -352,15 +354,18 @@ export function dashboard() {
     </section>
   `;
 
+  function toggleActuatorState(control, state) {
+    const group = control.closest(".group");
+    if (!group) return;
+    
+    group.classList.toggle(IS_ACTIVE_CLASS, state);
+  }
+
   function setActuatorsControls() {
-    const IS_ACTIVE_CLASS = "is-active";
     const controls = document.querySelectorAll("#actuators input[type=\"checkbox\"]");
     controls.forEach(control => {
       control.addEventListener("click", () => {
-        const group = control.closest(".group");
-        if (!group) return;
-        
-        group.classList.toggle(IS_ACTIVE_CLASS);
+        toggleActuatorState(control, control.checked);
         toggleRele(control);
       });
     });
