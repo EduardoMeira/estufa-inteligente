@@ -19,7 +19,7 @@ class FakeWebSocket {
 
   // gera mensagens fake no mesmo formato que seu back-end
   generateFakeData() {
-    const sensors = ["dht", "soil", "ldr", "rele1", "rele2"];
+    const sensors = ["dht", "soil", "ldr", "rele0", "rele1", "rele2", "rele3"];
     const sensor = sensors[Math.floor(Math.random() * sensors.length)];
 
     if (sensor === "dht") {

@@ -1,6 +1,8 @@
 import { APP_PATHS } from "../constants";
 
 export function dashboard() {
+  let historyChart;
+
   function getThemeOptions() {
     const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
@@ -10,7 +12,7 @@ export function dashboard() {
           backgroundColor: "#374146",
           style: { color: "#ffffff" }
         },
-        title: { text: "Histórico Mensal de Temperatura e Umidade", style: { color: "#ffffff" } },
+        title: { text: "Histórico de Temperatura e Umidade", style: { color: "#ffffff" } },
         subtitle: { style: { color: "#cccccc" } },
         xAxis: { labels: { style: { color: "#cccccc" } }, lineColor: "#666" },
         yAxis: { labels: { style: { color: "#cccccc" } }, gridLineColor: "#444" },
@@ -22,7 +24,7 @@ export function dashboard() {
           backgroundColor: "#EFEEEE",
           style: { color: "#4E5B61" }
         },
-        title: { text: "Histórico Mensal de Temperatura e Umidade", style: { color: "#4E5B61" } },
+        title: { text: "Histórico de Temperatura e Umidade", style: { color: "#4E5B61" } },
         subtitle: { style: { color: "#7F8C8D" } },
         xAxis: { labels: { style: { color: "#7F8C8D" } }, lineColor: "#ccc" },
         yAxis: { labels: { style: { color: "#7F8C8D" } }, gridLineColor: "#eee" },
@@ -31,34 +33,48 @@ export function dashboard() {
     }
   }
 
-  const temperaturas = [5, 6, 9, 14, 18, 22, 25, 26, 21, 15, 10, 6];
-
-  // Umidade em %
-  const umidades = [80, 78, 75, 70, 68, 65, 63, 65, 70, 75, 78, 80];
-
   const socket = new CustomWebsocket("ws://172.16.4.13:81");
   async function main() {
     socket.onmessage = function (event) {
-      console.log("Mensagem recebida: " + event.data);
-      const data = event.data.split(":");
-      const msg = data[0] || "";
-      const sensor = data[1] || "";
+      try {              
+        console.log("Mensagem recebida: " + event.data);
+        const data = event.data.split(":");
+        const msg = data[0] || "";
+        const sensor = data[1] || "";
 
-      if (sensor == "dht") {
-        var parts = msg.split(",");
-        document.getElementById("temperature").innerHTML = parts[0];
-        document.getElementById("humidity").innerHTML = parts[1];
-      }
-      else if (sensor == "soil") {
-        document.getElementById("soil").innerHTML = msg;
-      }
-      else if (sensor == "ldr") {
-        document.getElementById("ldr").innerHTML = msg;
-      }
-      else if (sensor.startsWith("rele")) {
-        let index = sensor.replace("rele", "");
-        let button = document.getElementById("rele" + index);
-        if (button) button.innerHTML = `Relé ${index} ${msg == "1" ? "ON" : "OFF"}`;
+        if (sensor == "dht") {
+          var parts = msg.split(",");
+          const temp = parseFloat(parts[0]) || 0;
+          const hum = parseFloat(parts[1]) || 0;
+
+          const tempEl = document.getElementById("temperature");
+          const humEl = document.getElementById("humidity");
+          if (tempEl) tempEl.innerHTML = temp.toFixed(2);
+          if (humEl) humEl.innerHTML = hum.toFixed(2);
+
+          if (historyChart) {
+            const now = new Date();
+            const offsetMs = -3 * 60 * 60 * 1000; // UTC-3
+            const time = new Date(now.getTime() + offsetMs).getTime();
+
+            const maxPoints = 30; 
+            historyChart.series[0].addPoint([time, temp], false, historyChart.series[0].data.length >= maxPoints);
+            historyChart.series[1].addPoint([time, hum], false, historyChart.series[1].data.length >= maxPoints);
+            historyChart.redraw();
+          }
+        }
+        else if (sensor == "soil") {
+          document.getElementById("soil").innerHTML = msg;
+        }
+        else if (sensor == "ldr") {
+          document.getElementById("ldr").innerHTML = msg;
+        }
+        else if (sensor.startsWith("rele")) {
+          const control = document.getElementById(sensor);
+          if (control) control.click();
+        }
+      } catch (error) {
+        console.error("Erro ao processar mensagem do socket:", error);
       }
     };
   }
@@ -72,22 +88,15 @@ export function dashboard() {
   // Função para trocar de modo
   function setMode(mode) {
     socket.send("mode:" + mode);
-    alert("Modo alterado para " + mode.toUpperCase());
   }
-
-  let historyChart;
 
   function chart() {
     historyChart = Highcharts.chart("container", {
       ...getThemeOptions(),
-      title: {
-        text: "Histórico Mensal de Temperatura e Umidade",
-      },
       xAxis: {
-        categories: [
-          "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
-          "Jul", "Ago", "Set", "Out", "Nov", "Dez"
-        ],
+        type: "datetime",
+        labels: { style: { color: "inherit" } },
+        lineColor: getThemeOptions().xAxis?.lineColor || undefined,
       },
       yAxis: [{
         title: {
@@ -100,12 +109,13 @@ export function dashboard() {
         opposite: true
       }],
       tooltip: {
-        shared: true
+        shared: true,
+        xDateFormat: "%H:%M:%S"
       },
       series: [{
         name: "Temperatura",
         type: "line",
-        data: temperaturas,
+        data: [],
         tooltip: {
           valueSuffix: " °C"
         },
@@ -114,7 +124,7 @@ export function dashboard() {
         name: "Umidade",
         type: "line",
         yAxis: 1,
-        data: umidades,
+        data: [],
         tooltip: {
           valueSuffix: " %"
         },
@@ -164,23 +174,12 @@ export function dashboard() {
       </div>
     </form>
     <div class="flex justify-between items-center gap-1">
-      <div class="mt-4 flex items-center justify-end">
-        <label class="relative inline-flex items-center cursor-pointer text-light">
+      <div class="mt-4 flex items-center justify-end w-full">
+        <label class="relative inline-flex items-center cursor-pointer text-light w-full">
           <input id="operation-mode" type="checkbox" class="sr-only peer" ${sessionStorage.getItem("operation-mode") === "true" ? "checked" : ""}>
           Modo de operação: 
-          <div class="ml-2 w-12 min-w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative
-                after:content-[''] after:absolute after:top-1 after:left-1 
-                after:bg-white after:border-gray-300 after:border after:rounded-full
-                after:h-[1.125rem] after:w-[1.125rem] after:transition-all peer-checked:after:translate-x-full peer-checked:after:left-2">
-          </div>
-          <span class="ml-2 hidden peer-checked:inline">Auto</span>
-          <span class="ml-2 peer-checked:hidden">Manual</span>
-        </label>
-      </div>
-      <div class="mt-4 flex items-center justify-end">
-        <label class="relative inline-flex items-center cursor-pointer text-light">
-          <input id="fake-websocket" type="checkbox" class="sr-only peer" ${sessionStorage.getItem("use-fake-websocket") === "true" ? "checked" : ""}>
-          Local Websocket
+          <span class="ml-auto hidden peer-checked:inline">Auto</span>
+          <span class="ml-auto peer-checked:hidden">Manual</span>
           <div class="ml-2 w-12 min-w-12 h-[1.625rem] bg-label rounded-full peer peer-checked:bg-toggle-input relative
                 after:content-[''] after:absolute after:top-1 after:left-1 
                 after:bg-white after:border-gray-300 after:border after:rounded-full
@@ -361,8 +360,8 @@ export function dashboard() {
         const group = control.closest(".group");
         if (!group) return;
         
-        toggleRele(control);
         group.classList.toggle(IS_ACTIVE_CLASS);
+        toggleRele(control);
       });
     });
   }
@@ -376,19 +375,10 @@ export function dashboard() {
     });
   }
 
-  function setWebsocketControl() {
-    const control = document.getElementById("fake-websocket");
-    control.addEventListener("click", () => {
-      sessionStorage.setItem("use-fake-websocket", control.checked);
-      window.location.reload();
-    });
-  }
-
   function execute() {
     main();
     chart();
     setActuatorsControls();
-    setWebsocketControl();
     setOperationModeControl();
   }
 

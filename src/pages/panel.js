@@ -64,6 +64,7 @@ export function panel(activeMenu) {
   `;
 
   function execute() {
+    if (!menuPage) return;
     if (typeof menuPage.execute === "function") menuPage.execute();
   }
 
